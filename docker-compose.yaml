@@ -1,14 +1,17 @@
 version: '3.6'
 services:
-  postgres:
-    image: postgres:13
-    ports:
-      - '5932:5432' # expose pg on port 5932 to not collide with pg from elswhere
+  db:
+    image: mysql:8.0
     restart: always
-    volumes:
-      - db_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_PASSWORD: ${PGPASSWORD}
-      POSTGRES_HOST_AUTH_METHOD: trust
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      # <Port exposed> : < MySQL Port running inside container>
+      - '3306:3306'
+    volumes:
+      - db_data:/var/lib/mysql
 volumes:
   db_data:
