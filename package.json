@@ -63,6 +63,7 @@
     "zod": "^3.0.0"
   },
   "devDependencies": {
+    "@next/eslint-plugin-next": "^13.0.7",
     "@playwright/test": "^1.29.1",
     "@tanstack/react-query-devtools": "^4.3.8",
     "@types/node": "^18.7.20",
