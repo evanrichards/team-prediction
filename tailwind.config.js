@@ -1,7 +1,11 @@
 module.exports = {
   mode: 'jit',
   purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
-  content: ['./src/pages/**/*.{js,ts,jsx,tsx}'],
+  content: [
+    './src/pages/**/*.{js,ts,jsx,tsx}',
+    'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}',
+  ],
+  darkMode: 'media', // or 'media' or 'class'
   theme: {
     extend: {},
   },
@@ -10,5 +14,6 @@ module.exports = {
       prefix: 'ctp',
       defaultFlavour: 'macchiato',
     }),
+    require('flowbite/plugin'),
   ],
 };

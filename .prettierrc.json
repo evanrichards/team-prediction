@@ -1,1 +1,5 @@
-{}
+{
+  "plugins": ["prettier-plugin-prisma", "prettier-plugin-tailwindcss"],
+  "pluginSearchDirs": false,
+  "tailwindConfig": "./styles/tailwind.config.js"
+}
