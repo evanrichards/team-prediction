@@ -4,14 +4,18 @@ import { getSession, SessionProvider } from 'next-auth/react';
 import type { AppType } from 'next/app';
 import { trpc } from 'utils/trpc';
 
+import { Analytics } from '@vercel/analytics/react';
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <SessionProvider session={session}>
-      <Component {...pageProps} />
-    </SessionProvider>
+    <>
+      <SessionProvider session={session}>
+        <Component {...pageProps} />
+      </SessionProvider>
+      <Analytics />
+    </>
   );
 };
 
