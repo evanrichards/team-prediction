@@ -14,14 +14,23 @@ const { publicRuntimeConfig } = getConfig();
 
 const { APP_URL } = publicRuntimeConfig;
 
-function getEndingLink(ctx: NextPageContext | undefined) {
+function getEndingLink(
+  ctx: NextPageContext | undefined,
+  forwardHeaders: boolean,
+) {
+  if (!forwardHeaders) {
+    return httpBatchLink({
+      url: `${APP_URL}/api/trpc`,
+    });
+  }
   return httpBatchLink({
     url: `${APP_URL}/api/trpc`,
     headers() {
       if (ctx?.req) {
         // on ssr, forward client's headers to the server
+        const { connection: _connection, ...headers } = ctx.req.headers;
         return {
-          ...ctx.req.headers,
+          ...headers,
           'x-ssr': '1',
         };
       }
@@ -53,7 +62,7 @@ export const trpc = createTRPCNext<AppRouter>({
               typeof window !== 'undefined') ||
             (opts.direction === 'down' && opts.result instanceof Error),
         }),
-        getEndingLink(ctx),
+        getEndingLink(ctx, typeof window === 'undefined'),
       ],
       /**
        * @link https://trpc.io/docs/data-transformers
@@ -68,7 +77,7 @@ export const trpc = createTRPCNext<AppRouter>({
   /**
    * @link https://trpc.io/docs/ssr
    */
-  ssr: false,
+  ssr: true,
 });
 
 // export const transformer = superjson;
