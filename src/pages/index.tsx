@@ -10,7 +10,7 @@ function SignedInPage() {
     <div>
       <h1>Home</h1>
       <p>
-        Welcome to the home page, <strong>{me.data?.name}</strong>!
+        Welcome to the home page, <strong>{me?.data?.name}</strong>!
       </p>
       <button onClick={() => signOut()}> Sign out </button>
     </div>
