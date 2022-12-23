@@ -3,10 +3,16 @@
  * This is an example router, you can delete this file and then update `../pages/api/trpc/[trpc].tsx`
  */
 import { prisma } from '../prisma';
-import { z } from 'zod';
 import { authedProcedure, publicProcedure, router } from '../trpc';
+import { z } from 'zod';
 
 // In a real app, you'd probably use Redis or something
+
+export const SignupInput = z.object({
+  email: z.string().email(),
+  name: z.string(),
+});
+export type SignupInput = z.infer<typeof SignupInput>;
 
 export const postRouter = router({
   add: authedProcedure
@@ -16,17 +22,20 @@ export const postRouter = router({
         text: z.string().min(1),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ ctx }) => {
       const { name } = ctx.user;
-      const post = await prisma.post.create({
-        data: {
-          ...input,
-          name,
-          source: 'GITHUB',
-        },
-      });
-      return post;
+      return name;
     }),
+
+  signup: publicProcedure.input(SignupInput).mutation(async ({ input }) => {
+    const resp = await prisma.signup.create({
+      data: {
+        name: input.name,
+        email: input.email,
+      },
+    });
+    return resp.id;
+  }),
 
   infinite: publicProcedure
     .input(
@@ -36,27 +45,6 @@ export const postRouter = router({
       }),
     )
     .query(async ({ input }) => {
-      const take = input.take ?? 10;
-      const cursor = input.cursor;
-
-      const page = await prisma.post.findMany({
-        orderBy: {
-          createdAt: 'desc',
-        },
-        cursor: cursor ? { createdAt: cursor } : undefined,
-        take: take + 1,
-        skip: 0,
-      });
-      const items = page.reverse();
-      let prevCursor: null | typeof cursor = null;
-      if (items.length > take) {
-        const prev = items.shift();
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        prevCursor = prev!.createdAt;
-      }
-      return {
-        items,
-        prevCursor,
-      };
+      return {};
     }),
 });

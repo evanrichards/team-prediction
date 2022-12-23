@@ -10,14 +10,9 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Post {
-  id     String @id @default(uuid())
-  name   String
-  text   String
-  source String @default("RAW") // RAW | GITHUB
-
-  // To return `Date`s intact through the API we need to add data transformers
-  // https://trpc.io/docs/data-transformers
-  createdAt DateTime @unique @default(now())
-  updatedAt DateTime @unique @default(now())
+model Signup {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String
+  createdAt DateTime @default(now())
 }
