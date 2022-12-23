@@ -18,6 +18,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 MyApp.getInitialProps = async ({ ctx }) => {
   return {
     session: await getSession(ctx),
+    ssr: true,
   };
 };
 

@@ -1,50 +1,22 @@
-import { trpc } from '../utils/trpc';
 // import { signIn, signOut, useSession } from 'next-auth/react';
-import { zodResolver } from '@hookform/resolvers/zod';
 import Head from 'next/head';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-export const SignupInput = z.object({
-  email: z.string().email(),
-  name: z.string(),
-});
-export type SignupInput = z.infer<typeof SignupInput>;
+import Signup from 'components/signup';
 
 export default function IndexPage() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SignupInput>({
-    resolver: zodResolver(SignupInput),
-  });
-  const signup = trpc.post.signup.useMutation();
-  const onSubmit = async (data: SignupInput) => {
-    try {
-      await signup.mutateAsync(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
     <>
       <Head>
         <title>Team Prediction</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="container">
-        <h1>Team Prediction</h1>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <label htmlFor="name">Name</label>
-          <input {...register('name', { required: true })} />
-          {errors.name && <span>This field is required</span>}
-          <label htmlFor="email">Email</label>
-          <input {...register('email', { required: true })} />
-          {errors.email && <span>This field is required</span>}
-          {/* errors will return when field validation fails  */}
-          <input type="submit" />
-        </form>
+      <div className="shadow h-screen bg-ctp-base text-ctp-pink">
+        <h1 className="w-screen text-center from-ctp-blue to-ctp-pink">
+          Team Prediction
+        </h1>
+        <br />
+        <div className="flex justify-center">
+          <Signup />
+        </div>
       </div>
     </>
   );
