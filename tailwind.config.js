@@ -3,12 +3,12 @@ module.exports = {
   purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
   content: ['./src/pages/**/*.{js,ts,jsx,tsx}'],
   theme: {
-    extend: {}
+    extend: {},
   },
   plugins: [
     require('@catppuccin/tailwindcss')({
       prefix: 'ctp',
-      defaultFlavour: 'macchiato'
-    })
+      defaultFlavour: 'macchiato',
+    }),
   ],
 };
