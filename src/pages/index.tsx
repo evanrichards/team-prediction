@@ -2,23 +2,26 @@
 import Head from 'next/head';
 import Signup from 'components/signup';
 import { signIn, signOut, useSession } from 'next-auth/react';
+import { trpc } from 'utils/trpc';
+
+function SignedInPage() {
+  const me = trpc.user.me.useQuery();
+  return (
+    <div>
+      <h1>Home</h1>
+      <p>
+        Welcome to the home page, <strong>{me.data?.name}</strong>!
+      </p>
+      <button onClick={() => signOut()}> Sign out </button>
+    </div>
+  );
+}
 
 export default function IndexPage() {
   const { data: session } = useSession();
 
   if (session && session.user) {
-    return (
-      <div>
-        <Head>
-          <title>Home</title>
-        </Head>
-        <h1>Home</h1>
-        <p>
-          Welcome to the home page, <strong>{session.user.email}</strong>!
-        </p>
-        <button onClick={() => signOut()}> Sign out </button>
-      </div>
-    );
+    return <SignedInPage />;
   }
   return (
     <>

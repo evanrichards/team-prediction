@@ -2,6 +2,7 @@ import NextAuth from 'next-auth';
 import { AppProviders } from 'next-auth/providers';
 import Auth0Provider from 'next-auth/providers/auth0';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import { prisma } from 'server/prisma';
 
 let useMockProvider = process.env.NODE_ENV === 'test';
 const {
@@ -78,7 +79,36 @@ if (useMockProvider) {
     }),
   );
 }
+
+const ALLOWED_EMAIL_PATTERS = [/@loop.com$/, /tevanrichards@gmail.com/];
+
 export default NextAuth({
   // Configure one or more authentication providers
   providers,
+  callbacks: {
+    async signIn({ user }) {
+      const { email, name } = user;
+      if (
+        email &&
+        name &&
+        ALLOWED_EMAIL_PATTERS.some((pattern) => pattern.test(email))
+      ) {
+        await prisma.user.upsert({
+          where: {
+            email,
+          },
+          update: {
+            lastLogin: new Date(),
+          },
+          create: {
+            email,
+            name,
+            lastLogin: new Date(),
+          },
+        });
+        return true;
+      }
+      return '/unauthorized';
+    },
+  },
 });

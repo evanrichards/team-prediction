@@ -13,21 +13,16 @@
     "project": "tsconfig.json"
   },
   "rules": {
-    // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
     "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
+    ],
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
     "@typescript-eslint/no-explicit-any": "off"
   },
-  // "overrides": [
-  //   {
-  //     "files": [],
-  //     "rules": {
-  // "@typescript-eslint/no-unused-vars": "off"
-  //     }
-  //   }
-  // ],
   "settings": {
     "react": {
       "version": "detect"

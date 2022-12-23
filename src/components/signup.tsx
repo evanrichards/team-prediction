@@ -11,7 +11,6 @@ export type SignupInput = z.infer<typeof SignupInput>;
 
 const Signup = () => {
   const {
-    register,
     handleSubmit,
     control,
     formState: { errors },

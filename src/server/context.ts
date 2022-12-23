@@ -12,7 +12,13 @@ export const createContext = async (opts: CreateNextContextOptions) => {
   console.log('createContext for', session?.user?.name ?? 'unknown user');
 
   return {
-    session,
+    session: {
+      ...session,
+      user: {
+        ...session?.user,
+        uuid: '',
+      },
+    },
   };
 };
 
