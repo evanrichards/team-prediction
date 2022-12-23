@@ -14,7 +14,6 @@
     "generate-sqlite": "prisma generate --schema=./prisma/_sqlite/schema.prisma",
     "migrate-sqlite": "prisma migrate dev --name init --schema=./prisma/_sqlite/schema.prisma",
     "build-sqlite": "run-s generate-sqlite migrate-sqlite build:4-server && next build",
-    "dev:wss": "cross-env PORT=3001 tsx watch src/server/wssDevServer.ts --tsconfig tsconfig.server.json ",
     "dev:next": "next dev",
     "dev": "run-p dev:*",
     "dev-sqlite": "run-s generate-sqlite migrate-sqlite && run-p dev:*",
@@ -59,7 +58,6 @@
     "react-dom": "^18.2.0",
     "superjson": "^1.7.4",
     "tsx": "^3.9.0",
-    "ws": "^8.0.0",
     "zod": "^3.0.0"
   },
   "devDependencies": {

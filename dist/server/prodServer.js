@@ -3,13 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const context_1 = require("./context");
-const _app_1 = require("./routers/_app");
-const ws_1 = require("@trpc/server/adapters/ws");
 const http_1 = __importDefault(require("http"));
 const next_1 = __importDefault(require("next"));
 const url_1 = require("url");
-const ws_2 = __importDefault(require("ws"));
 const port = parseInt(process.env.PORT || '3000', 10);
 const dev = process.env.NODE_ENV !== 'production';
 const app = (0, next_1.default)({ dev });
@@ -29,12 +25,6 @@ app.prepare().then(() => {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const parsedUrl = (0, url_1.parse)(req.url, true);
         handle(req, res, parsedUrl);
-    });
-    const wss = new ws_2.default.Server({ server });
-    const handler = (0, ws_1.applyWSSHandler)({ wss, router: _app_1.appRouter, createContext: context_1.createContext });
-    process.on('SIGTERM', () => {
-        console.log('SIGTERM');
-        handler.broadcastReconnectNotification();
     });
     server.listen(port);
     // tslint:disable-next-line:no-console

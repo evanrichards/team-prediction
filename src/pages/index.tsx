@@ -20,8 +20,6 @@ function AddMessageForm({ onMessagePost }: { onMessagePost: () => void }) {
     } catch {}
   }
 
-  const isTyping = trpc.post.isTyping.useMutation();
-
   const userName = session?.user?.name;
   if (!userName) {
     return (
@@ -76,7 +74,6 @@ function AddMessageForm({ onMessagePost }: { onMessagePost: () => void }) {
                 if (e.key === 'Enter' && enterToPostMessage) {
                   postMessage();
                 }
-                isTyping.mutate({ typing: true });
               }}
               onKeyUp={(e) => {
                 if (e.key === 'Shift') {
@@ -85,7 +82,6 @@ function AddMessageForm({ onMessagePost }: { onMessagePost: () => void }) {
               }}
               onBlur={() => {
                 setEnterToPostMessage(true);
-                isTyping.mutate({ typing: false });
               }}
             />
             <div>
@@ -110,7 +106,6 @@ export default function IndexPage() {
       getPreviousPageParam: (d) => d.prevCursor,
     },
   );
-  const utils = trpc.useContext();
   const { hasPreviousPage, isFetchingPreviousPage, fetchPreviousPage } =
     postsQuery;
 
@@ -160,24 +155,6 @@ export default function IndexPage() {
     scrollToBottomOfList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  // subscribe to new posts and add
-  trpc.post.onAdd.useSubscription(undefined, {
-    onData(post) {
-      addMessages([post]);
-    },
-    onError(err) {
-      console.error('Subscription error:', err);
-      // we might have missed a message - invalidate cache
-      utils.post.infinite.invalidate();
-    },
-  });
-
-  const [currentlyTyping, setCurrentlyTyping] = useState<string[]>([]);
-  trpc.post.whoIsTyping.useSubscription(undefined, {
-    onData(data) {
-      setCurrentlyTyping(data);
-    },
-  });
 
   return (
     <>
@@ -293,11 +270,6 @@ export default function IndexPage() {
             </div>
             <div className="w-full">
               <AddMessageForm onMessagePost={() => scrollToBottomOfList()} />
-              <p className="h-2 italic text-gray-400">
-                {currentlyTyping.length
-                  ? `${currentlyTyping.join(', ')} typing...`
-                  : ''}
-              </p>
             </div>
 
             {process.env.NODE_ENV !== 'production' && (

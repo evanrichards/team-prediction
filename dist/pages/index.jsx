@@ -25,7 +25,6 @@ function AddMessageForm({ onMessagePost }) {
         }
         catch { }
     }
-    const isTyping = trpc_1.trpc.post.isTyping.useMutation();
     const userName = (_a = session === null || session === void 0 ? void 0 : session.user) === null || _a === void 0 ? void 0 : _a.name;
     if (!userName) {
         return (<div className="flex justify-between w-full px-3 py-2 text-lg text-gray-200 bg-gray-800 rounded">
@@ -60,14 +59,12 @@ function AddMessageForm({ onMessagePost }) {
             if (e.key === 'Enter' && enterToPostMessage) {
                 postMessage();
             }
-            isTyping.mutate({ typing: true });
         }} onKeyUp={(e) => {
             if (e.key === 'Shift') {
                 setEnterToPostMessage(true);
             }
         }} onBlur={() => {
             setEnterToPostMessage(true);
-            isTyping.mutate({ typing: false });
         }}/>
             <div>
               <button type="submit" className="px-4 py-1 bg-indigo-500 rounded">
@@ -85,7 +82,6 @@ function IndexPage() {
     const postsQuery = trpc_1.trpc.post.infinite.useInfiniteQuery({}, {
         getPreviousPageParam: (d) => d.prevCursor,
     });
-    const utils = trpc_1.trpc.useContext();
     const { hasPreviousPage, isFetchingPreviousPage, fetchPreviousPage } = postsQuery;
     // list of messages that are rendered
     const [messages, setMessages] = (0, react_2.useState)(() => {
@@ -128,23 +124,6 @@ function IndexPage() {
         scrollToBottomOfList();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    // subscribe to new posts and add
-    trpc_1.trpc.post.onAdd.useSubscription(undefined, {
-        onData(post) {
-            addMessages([post]);
-        },
-        onError(err) {
-            console.error('Subscription error:', err);
-            // we might have missed a message - invalidate cache
-            utils.post.infinite.invalidate();
-        },
-    });
-    const [currentlyTyping, setCurrentlyTyping] = (0, react_2.useState)([]);
-    trpc_1.trpc.post.whoIsTyping.useSubscription(undefined, {
-        onData(data) {
-            setCurrentlyTyping(data);
-        },
-    });
     return (<>
       <head_1.default>
         <title>Prisma Starter</title>
@@ -229,11 +208,6 @@ function IndexPage() {
             </div>
             <div className="w-full">
               <AddMessageForm onMessagePost={() => scrollToBottomOfList()}/>
-              <p className="h-2 italic text-gray-400">
-                {currentlyTyping.length
-            ? `${currentlyTyping.join(', ')} typing...`
-            : ''}
-              </p>
             </div>
 
             {process.env.NODE_ENV !== 'production' && (<div className="hidden md:block">

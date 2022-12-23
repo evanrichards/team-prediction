@@ -1,10 +1,6 @@
-import { createContext } from './context';
-import { appRouter } from './routers/_app';
-import { applyWSSHandler } from '@trpc/server/adapters/ws';
 import http from 'http';
 import next from 'next';
 import { parse } from 'url';
-import ws from 'ws';
 
 const port = parseInt(process.env.PORT || '3000', 10);
 const dev = process.env.NODE_ENV !== 'production';
@@ -25,13 +21,6 @@ app.prepare().then(() => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const parsedUrl = parse(req.url!, true);
     handle(req, res, parsedUrl);
-  });
-  const wss = new ws.Server({ server });
-  const handler = applyWSSHandler({ wss, router: appRouter, createContext });
-
-  process.on('SIGTERM', () => {
-    console.log('SIGTERM');
-    handler.broadcastReconnectNotification();
   });
   server.listen(port);
 
