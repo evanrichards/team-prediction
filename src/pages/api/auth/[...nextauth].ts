@@ -48,7 +48,7 @@ if (useMockProvider) {
           const user = {
             id: credentials.name,
             name: credentials.name,
-            email: credentials.name,
+            email: `${credentials.name}@loop.com`,
           };
           return user;
         }
@@ -108,6 +108,7 @@ export default NextAuth({
         });
         return true;
       }
+      console.log('⚠️ User not allowed to sign in', user);
       return '/unauthorized';
     },
   },
