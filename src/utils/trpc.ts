@@ -10,7 +10,7 @@ import superjson from 'superjson';
 // ℹ️ Type-only import:
 // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html#type-only-imports-and-export
 
-const { publicRuntimeConfig } = getConfig();
+const { publicRuntimeConfig, headers: configHeaders } = getConfig();
 
 const { APP_URL } = publicRuntimeConfig;
 
@@ -21,20 +21,22 @@ function getEndingLink(
   if (!forwardHeaders) {
     return httpBatchLink({
       url: `${APP_URL}/api/trpc`,
+      headers: configHeaders,
     });
   }
   return httpBatchLink({
     url: `${APP_URL}/api/trpc`,
-    headers() {
+    async headers() {
       if (ctx?.req) {
         // on ssr, forward client's headers to the server
         const { connection: _connection, ...headers } = ctx.req.headers;
         return {
+          ...configHeaders,
           ...headers,
           'x-ssr': '1',
         };
       }
-      return {};
+      return configHeaders;
     },
   });
 }
