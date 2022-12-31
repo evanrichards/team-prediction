@@ -19,11 +19,16 @@ function getEndingLink(
   forwardHeaders: boolean,
 ) {
   if (!forwardHeaders) {
+    // This is the frontend case. Note here that we do not add the app URL to
+    // the batch link, because the frontend appends its current URL to the
+    // request.
     return httpBatchLink({
-      url: `${APP_URL}/api/trpc`,
+      url: '/api/trpc',
       headers: configHeaders,
     });
   }
+  // This is the backend case. Note here that we add the app URL to the batch
+  // link to match the URL of the frontend (I think).
   return httpBatchLink({
     url: `${APP_URL}/api/trpc`,
     async headers() {

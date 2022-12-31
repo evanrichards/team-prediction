@@ -18,7 +18,6 @@ function SignedInPage() {
 
 export default function IndexPage() {
   const { data: session } = useSession();
-  console.log('session', session);
 
   if (session && session.user) {
     return <SignedInPage />;

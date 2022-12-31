@@ -8,7 +8,7 @@ module.exports = {
   },
   publicRuntimeConfig: {
     // Will be available on both server and client
-    APP_URL: process.env.APP_URL,
+    APP_URL: process.env.NEXT_PUBLIC_VERCEL_URL ?? process.env.APP_URL,
   },
   async headers() {
     return [
