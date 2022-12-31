@@ -1,6 +1,5 @@
 // import { signIn, signOut, useSession } from 'next-auth/react';
 import Head from 'next/head';
-import Signup from 'components/signup';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { trpc } from 'utils/trpc';
 
@@ -19,6 +18,7 @@ function SignedInPage() {
 
 export default function IndexPage() {
   const { data: session } = useSession();
+  console.log('session', session);
 
   if (session && session.user) {
     return <SignedInPage />;
@@ -40,7 +40,6 @@ export default function IndexPage() {
           >
             Sign in
           </button>
-          <Signup />
         </div>
       </div>
     </>

@@ -9,7 +9,7 @@ import { getSession } from 'next-auth/react';
 export const createContext = async (opts: CreateNextContextOptions) => {
   const session = await getSession(opts);
 
-  console.log('createContext for', session?.user?.name ?? 'unknown user');
+  console.log('createContext for', JSON.stringify(session));
 
   return {
     session: {

@@ -48,11 +48,8 @@ export const middleware = t.middleware;
 export const mergeRouters = t.mergeRouters;
 
 const isAuthed = middleware(({ next, ctx }) => {
+  console.log('isAuthed', JSON.stringify(ctx));
   const user = ctx.session?.user;
-
-  if (!user?.name) {
-    throw new TRPCError({ code: 'UNAUTHORIZED' });
-  }
 
   return next({
     ctx: {
