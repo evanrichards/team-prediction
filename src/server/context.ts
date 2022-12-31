@@ -1,6 +1,8 @@
 import { inferAsyncReturnType } from '@trpc/server';
 import { CreateNextContextOptions } from '@trpc/server/adapters/next';
+import { Session } from 'next-auth';
 import { getSession } from 'next-auth/react';
+import { prisma } from 'server/prisma';
 
 /**
  * Creates context for an incoming request
@@ -8,18 +10,29 @@ import { getSession } from 'next-auth/react';
  */
 export const createContext = async (opts: CreateNextContextOptions) => {
   const session = await getSession(opts);
-
-  console.log('createContext for', JSON.stringify(session));
+  const userUuid = await getUserUuidFromSession(session);
 
   return {
-    session: {
-      ...session,
-      user: {
-        ...session?.user,
-        uuid: '',
-      },
+    session,
+    user: {
+      email: session?.user?.email,
+      name: session?.user?.name,
+      uuid: userUuid,
+      signedIn: !!userUuid,
     },
   };
 };
+
+async function getUserUuidFromSession(session?: Session | null) {
+  if (!session?.user?.email) {
+    return null;
+  }
+  const userUuid = await prisma.user.findUnique({
+    where: {
+      email: session.user.email,
+    },
+  });
+  return userUuid;
+}
 
 export type Context = inferAsyncReturnType<typeof createContext>;
