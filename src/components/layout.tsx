@@ -5,12 +5,13 @@ import { Heading2XL } from 'src/components/heading';
 import tw from 'tailwind-styled-components';
 
 const SITE_TITLE = 'Team Prediction';
+const NO_HOME_ROUTES = ['Markets', 'Team Prediction'];
 export default function Layout({
   children,
-  home = false,
+  pageTitle,
 }: {
   children: React.ReactNode;
-  home?: boolean;
+  pageTitle: string;
 }) {
   const { data: session } = useSession();
   return (
@@ -18,6 +19,7 @@ export default function Layout({
       <Head>
         <meta name="description" content="A prediction market tool for teams" />
         <link rel="icon" href="/favicon.ico" />
+        <title>{pageTitle}</title>
         <meta
           property="og:image"
           content={`https://og-image.vercel.app/${encodeURI(
@@ -28,10 +30,10 @@ export default function Layout({
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <Header>
-        <Heading2XL>{home ? <>Home</> : <>Market</>}</Heading2XL>
+        <Heading2XL>{pageTitle}</Heading2XL>
       </Header>
       <main>{children}</main>
-      {!home && (
+      {!NO_HOME_ROUTES.includes(pageTitle) && (
         <div>
           Return to <Link href="/">Home</Link>
         </div>

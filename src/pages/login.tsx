@@ -3,7 +3,7 @@ import Layout from 'src/components/layout';
 
 export default function Login() {
   return (
-    <Layout home>
+    <Layout pageTitle="Team Prediction">
       <div className="flex justify-center">
         <button
           className="bg-ctp-blue hover:bg-ctp-mauve rounded py-2 px-4 font-bold text-white"
