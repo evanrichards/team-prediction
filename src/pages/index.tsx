@@ -14,6 +14,9 @@ export default function IndexPage() {
       router.push('/login');
     }
   }, [router, status]);
+  if (status === 'loading') {
+    return <Layout home>Loading...</Layout>;
+  }
   const usersQuery = trpc.user.users.useQuery();
 
   return (
