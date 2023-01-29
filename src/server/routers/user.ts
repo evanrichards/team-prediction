@@ -13,4 +13,19 @@ export const userRouter = router({
     });
     return resp;
   }),
+  users: authedProcedure.query(async ({ ctx }) => {
+    const userEmail = ctx.session?.user?.email;
+    if (!userEmail) {
+      throw new Error('no auth');
+    }
+    const domain = userEmail.split('@')[1];
+    const resp = await prisma.user.findMany({
+      where: {
+        email: {
+          endsWith: domain,
+        },
+      },
+    });
+    return resp;
+  }),
 });
