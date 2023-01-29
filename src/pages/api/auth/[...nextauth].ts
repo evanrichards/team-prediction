@@ -2,7 +2,7 @@ import NextAuth from 'next-auth';
 import { AppProviders } from 'next-auth/providers';
 import Auth0Provider from 'next-auth/providers/auth0';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { prisma } from 'server/prisma';
+import { prisma } from 'src/server/prisma';
 
 let useMockProvider = process.env.NODE_ENV === 'test';
 const {
@@ -110,6 +110,9 @@ export default NextAuth({
       }
       console.log('⚠️ User not allowed to sign in', user);
       return '/unauthorized';
+    },
+    async redirect() {
+      return '/';
     },
   },
 });

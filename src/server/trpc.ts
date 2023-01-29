@@ -8,8 +8,8 @@
  * @see https://trpc.io/docs/v10/procedures
  */
 
-import { Context } from './context';
 import { initTRPC, TRPCError } from '@trpc/server';
+import { Context } from 'src/server/context';
 import superjson from 'superjson';
 
 const t = initTRPC.context<Context>().create({

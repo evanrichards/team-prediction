@@ -1,46 +1,24 @@
 // import { signIn, signOut, useSession } from 'next-auth/react';
-import Head from 'next/head';
-import { signIn, signOut, useSession } from 'next-auth/react';
-import { trpc } from 'utils/trpc';
-
-function SignedInPage() {
-  const me = trpc.user.me.useQuery();
-  return (
-    <div>
-      <h1>Home</h1>
-      <p>
-        Welcome to the home page, <strong>{me?.data?.name}</strong>!
-      </p>
-      <button onClick={() => signOut()}> Sign out </button>
-    </div>
-  );
-}
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import Layout from 'src/components/layout';
 
 export default function IndexPage() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
-  if (session && session.user) {
-    return <SignedInPage />;
-  }
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login');
+    }
+  }, [router, status]);
+
   return (
-    <>
-      <Head>
-        <title>Team Prediction</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <div className="h-screen bg-ctp-base text-ctp-text shadow">
-        <h1 className="w-screen from-ctp-blue to-ctp-mauve text-center font-sans text-2xl font-extrabold leading-loose tracking-wide subpixel-antialiased">
-          Team Prediction
-        </h1>
-        <div className="flex justify-center">
-          <button
-            className="rounded bg-ctp-blue py-2 px-4 font-bold text-white hover:bg-ctp-mauve"
-            onClick={() => signIn()}
-          >
-            Sign in
-          </button>
-        </div>
-      </div>
-    </>
+    <Layout home>
+      <p>
+        Welcome to the home page, <strong>{session?.user?.name}</strong>!
+      </p>
+    </Layout>
   );
 }

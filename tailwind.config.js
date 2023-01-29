@@ -10,7 +10,7 @@ module.exports = {
   },
   plugins: [
     require('@catppuccin/tailwindcss')({
-      prefix: 'ctp',
+      prefix: false,
       defaultFlavour: 'macchiato',
     }),
     require('flowbite/plugin'),
