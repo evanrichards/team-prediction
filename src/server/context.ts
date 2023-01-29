@@ -32,7 +32,7 @@ async function getUserUuidFromSession(session?: Session | null) {
       email: session.user.email,
     },
   });
-  return userUuid;
+  return userUuid?.uuid;
 }
 
 export type Context = inferAsyncReturnType<typeof createContext>;
