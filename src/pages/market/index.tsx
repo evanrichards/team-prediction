@@ -1,10 +1,10 @@
 import { GetStaticPropsResult } from 'next';
 import Image from 'next/image';
-import { useState } from 'react';
 import Layout from 'src/components/layout';
+import MarketCard from 'src/components/markets/market-card';
 import { Context } from 'src/server/context';
 import { MarketService } from 'src/server/markets/markets.service';
-import { LedgerEntry, MarketAlignment, MarketUuid } from 'src/types/market';
+import { LedgerEntry, MarketUuid } from 'src/types/market';
 import { trpc } from 'src/utils/trpc';
 import { NIL as NIL_UUID } from 'uuid';
 
@@ -13,62 +13,31 @@ const ONE_MARKET = MarketUuid.parse(NIL_UUID);
 export const getServerSideProps = async (
   ctx: Context,
 ): Promise<
-  GetStaticPropsResult<{ initMarketData: LedgerEntry[] } | undefined>
+  GetStaticPropsResult<
+    | {
+        marketDataProps: LedgerEntry[];
+      }
+    | undefined
+  >
 > => {
-  const marketData = await new MarketService().getActivityForMarket(
+  const marketService = new MarketService();
+  const marketDataProps = await marketService.getActivityForMarket(
     ctx,
     ONE_MARKET,
   );
+
   return {
-    props: { initMarketData: marketData },
+    props: { marketDataProps },
   };
 };
 
 export default function MarketPage({
-  initMarketData,
+  marketDataProps,
 }: {
-  initMarketData: LedgerEntry[];
+  marketDataProps: LedgerEntry[];
 }) {
   const usersQuery = trpc.user.users.useQuery();
-  const [state, setState] = useState(initMarketData);
-  const buyMutation = trpc.market.buySharesInMarket.useMutation({
-    onSuccess: (data) => {
-      setState(data);
-    },
-  });
-  const sellMutation = trpc.market.sellSharesInMarket.useMutation({
-    onSuccess: (data) => {
-      setState(data);
-    },
-  });
-  const handleBuyYes = () => {
-    buyMutation.mutate({
-      marketUuid: ONE_MARKET,
-      shares: 1,
-      alignment: MarketAlignment.enum.YES,
-    });
-  };
-  const handleBuyNo = () => {
-    buyMutation.mutate({
-      marketUuid: ONE_MARKET,
-      shares: 1,
-      alignment: MarketAlignment.enum.NO,
-    });
-  };
-  const handleSellYes = () => {
-    sellMutation.mutate({
-      marketUuid: ONE_MARKET,
-      shares: 1,
-      alignment: MarketAlignment.enum.YES,
-    });
-  };
-  const handleSellNo = () => {
-    sellMutation.mutate({
-      marketUuid: ONE_MARKET,
-      shares: 1,
-      alignment: MarketAlignment.enum.NO,
-    });
-  };
+
   return (
     <Layout pageTitle="Markets">
       <h1>The Market Page</h1>
@@ -84,28 +53,7 @@ export default function MarketPage({
           </ul>
         </div>
       )}
-      <div>
-        Will users be able to create their own markets by Feb 14th?
-        <ul className="list-decimal">
-          {state.map((market) => (
-            <li key={market.uuid}>
-              {market.marketAlignment} - {market.transactionType}
-            </li>
-          ))}
-        </ul>
-        <button onClick={handleBuyNo} disabled={buyMutation.isLoading}>
-          Buy No
-        </button>
-        <button onClick={handleBuyYes} disabled={buyMutation.isLoading}>
-          Buy Yes
-        </button>
-        <button onClick={handleSellNo} disabled={sellMutation.isLoading}>
-          Sell No
-        </button>
-        <button onClick={handleSellYes} disabled={sellMutation.isLoading}>
-          Sell Yes
-        </button>
-      </div>
+      <MarketCard marketUuid={ONE_MARKET} marketDataProps={marketDataProps} />
     </Layout>
   );
 }
