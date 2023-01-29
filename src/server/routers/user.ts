@@ -1,16 +1,15 @@
 import { prisma } from 'src/server/prisma';
 import { authedProcedure, router } from 'src/server/trpc';
+import { UserService } from 'src/server/users/user.service';
+
+const userService = new UserService();
 
 export const userRouter = router({
   me: authedProcedure.query(async ({ ctx }) => {
     if (!ctx.user?.email) {
       throw new Error('no auth');
     }
-    const resp = await prisma.user.findUnique({
-      where: {
-        email: ctx.user.email,
-      },
-    });
+    const resp = await userService.getCurrentUser(ctx.user.email);
     return resp;
   }),
   users: authedProcedure.query(async ({ ctx }) => {

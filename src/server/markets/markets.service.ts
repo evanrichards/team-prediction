@@ -1,3 +1,4 @@
+import { filterUserLiveShares, parseLedger } from 'src/common/markets/utils';
 import { Context } from 'src/server/context';
 import { prisma } from 'src/server/prisma';
 import {
@@ -27,6 +28,12 @@ export class MarketService {
     );
   }
 
+  async getCurrentMarketValue(_ctx: Context, marketUuid: MarketUuid) {
+    const activity = await this.getActivityForMarket(_ctx, marketUuid);
+    const split = parseLedger(activity);
+    return (split.yesBuyCount - split.yesSellCount) / split.totalLiveCount;
+  }
+
   async buySharesInMarket(ctx: Context, input: BuySharesInMarketInput) {
     if (!ctx.user) {
       throw new Error('no auth');
@@ -53,37 +60,14 @@ export class MarketService {
     }
     const { uuid: userUuid } = ctx.user;
     const allShares = await this.getActivityForMarket(ctx, input.marketUuid);
-    const userShares = allShares.filter((share) => share.userUuid === userUuid);
-    if (input.alignment === MarketAlignment.enum.YES) {
-      const yesShares = userShares.filter(
-        (share) => share.marketAlignment === MarketAlignment.enum.YES,
-      );
-      const yesBuyShares = yesShares.filter(
-        (share) => share.transactionType === TransactionType.enum.BUY,
-      );
-      const yesSellShares = yesShares.filter(
-        (share) => share.transactionType === TransactionType.enum.SELL,
-      );
-      const remainingShares = yesBuyShares.length - yesSellShares.length;
-      console.log('remainingShares', remainingShares);
-      if (remainingShares < input.shares) {
-        throw new Error('Not enough shares to sell');
-      }
-    } else {
-      const noShares = userShares.filter(
-        (share) => share.marketAlignment === MarketAlignment.enum.NO,
-      );
-      const noBuyShares = noShares.filter(
-        (share) => share.transactionType === TransactionType.enum.BUY,
-      );
-      const noSellShares = noShares.filter(
-        (share) => share.transactionType === TransactionType.enum.SELL,
-      );
-      const remainingShares = noBuyShares.length - noSellShares.length;
-      console.log('remainingShares', remainingShares);
-      if (remainingShares < input.shares) {
-        throw new Error('Not enough shares to sell');
-      }
+    const userLiveShares = filterUserLiveShares(allShares, userUuid);
+    if (
+      (input.alignment === MarketAlignment.enum.YES &&
+        userLiveShares.yesLiveCount < input.shares) ||
+      (input.alignment === MarketAlignment.enum.NO &&
+        userLiveShares.noLiveCount < input.shares)
+    ) {
+      throw new Error('not enough shares to sell');
     }
     await prisma.$transaction(
       new Array(input.shares).fill(0).map(() =>
