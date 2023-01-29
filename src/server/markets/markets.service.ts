@@ -1,4 +1,3 @@
-import nullthrows from 'nullthrows';
 import { Context } from 'src/server/context';
 import { prisma } from 'src/server/prisma';
 import {
@@ -32,12 +31,13 @@ export class MarketService {
     if (!ctx.user) {
       throw new Error('no auth');
     }
+    const { uuid: userUuid } = ctx.user;
     await prisma.$transaction(
       new Array(input.shares).fill(0).map(() =>
         prisma.marketLedger.create({
           data: {
             marketUuid: input.marketUuid,
-            userUuid: nullthrows(ctx.user.uuid),
+            userUuid,
             marketAlignment: input.alignment,
             transactionType: TransactionType.enum.BUY,
           },
@@ -51,7 +51,7 @@ export class MarketService {
     if (!ctx.user) {
       throw new Error('no auth');
     }
-    const userUuid = nullthrows(ctx.user.uuid);
+    const { uuid: userUuid } = ctx.user;
     const allShares = await this.getActivityForMarket(ctx, input.marketUuid);
     const userShares = allShares.filter((share) => share.userUuid === userUuid);
     if (input.alignment === MarketAlignment.enum.YES) {

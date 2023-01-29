@@ -48,7 +48,7 @@ export const middleware = t.middleware;
 export const mergeRouters = t.mergeRouters;
 
 const isAuthed = middleware(({ next, ctx }: { next: any; ctx: Context }) => {
-  if (!ctx.user.signedIn) {
+  if (!ctx.user) {
     throw new TRPCError({
       code: 'UNAUTHORIZED',
       message: 'You must be signed in to do this',
