@@ -24,10 +24,11 @@
     "migrate": "prisma migrate deploy",
     "start": "cross-env NODE_ENV=production node dist/server/prodServer.js",
     "studio": "prisma studio",
-    "lint": "eslint src",
-    "lint-fix": "yarn lint --fix",
+    "style": "eslint src",
+    "style-fix": "yarn style --fix",
     "postinstall": "prisma generate",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "prisma:dev": "prisma migrate dev"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -52,12 +53,14 @@
     "next": "^13.1.1",
     "next-auth": "^4.18.7",
     "node-fetch": "^3.3.0",
+    "nullthrows": "^1.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.41.0",
     "superjson": "^1.7.4",
     "tailwind-styled-components": "^2.2.0",
     "tsx": "^3.12.2",
+    "uuid": "^9.0.0",
     "zod": "^3.0.0"
   },
   "devDependencies": {
@@ -68,6 +71,7 @@
     "@types/node": "^18.7.20",
     "@types/node-fetch": "^2.5.11",
     "@types/react": "^18.0.9",
+    "@types/uuid": "^9.0.0",
     "@types/ws": "^8.2.0",
     "@typescript-eslint/eslint-plugin": "^5.37.0",
     "@typescript-eslint/parser": "^5.48.1",

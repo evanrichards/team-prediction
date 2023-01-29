@@ -1,17 +1,31 @@
+import { MarketService } from 'src/server/markets/markets.service';
 import { authedProcedure, router } from 'src/server/trpc';
-import z from 'zod';
+import {
+  BuySharesInMarketInput,
+  LedgerEntry,
+  MarketUuid,
+  SellSharesInMarketInput,
+} from 'src/types/market';
+
+const marketService = new MarketService();
 
 export const marketShareRouter = router({
-  sharesForMarket: authedProcedure
-    .input(
-      z.object({
-        marketUuid: z.string().uuid(),
-      }),
-    )
-    .query(async ({ ctx }) => {
-      if (!ctx.user?.email) {
-        throw new Error('no auth');
-      }
-      return [];
+  marketActivity: authedProcedure
+    .input(MarketUuid)
+    .output(LedgerEntry.array())
+    .query(async ({ ctx, input }) => {
+      return marketService.getActivityForMarket(ctx, input);
+    }),
+  buySharesInMarket: authedProcedure
+    .input(BuySharesInMarketInput)
+    .output(LedgerEntry.array())
+    .mutation(async ({ ctx, input }) => {
+      return marketService.buySharesInMarket(ctx, input);
+    }),
+  sellSharesInMarket: authedProcedure
+    .input(SellSharesInMarketInput)
+    .output(LedgerEntry.array())
+    .mutation(async ({ ctx, input }) => {
+      return marketService.sellSharesInMarket(ctx, input);
     }),
 });

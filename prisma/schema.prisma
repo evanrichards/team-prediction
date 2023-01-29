@@ -9,27 +9,30 @@ datasource db {
 }
 
 model User {
-  uuid        String        @id @default(uuid())
-  email       String        @unique
-  name        String
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @updatedAt @map("updated_at")
-  lastLogin   DateTime?     @map("last_login")
-  MarketShare MarketShare[]
+  uuid         String         @id @default(uuid())
+  email        String         @unique
+  name         String
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  lastLogin    DateTime?      @map("last_login")
+  MarketLedger MarketLedger[]
 
   @@map("user")
 }
 
-model MarketShare {
-  uuid            String   @id @default(uuid())
-  user            User     @relation(fields: [userUuid], references: [uuid])
-  userUuid        String   @map("user_uuid")
-  marketUuid      String   @map("market_uuid")
-  marketAlignment String   @map("market_alignment")
-  shares          Float
-  purchaseValue   Float    @map("purchase_value")
-  createdAt       DateTime @default(now()) @map("created_at")
+model MarketLedger {
+  uuid            String @id @default(uuid())
+  marketUuid      String @map("market_uuid")
+  // Market alignmet is either "yes" or "no"
+  marketAlignment String @map("market_alignment")
+  // Transaction type is either "buy" or "sell"
+  transactionType String @map("transaction_type")
+  user            User   @relation(fields: [userUuid], references: [uuid])
+  userUuid        String @map("user_uuid")
+
+  createdAt DateTime @default(now()) @map("created_at")
 
   @@index([userUuid])
-  @@map("market_share")
+  @@index([marketUuid])
+  @@map("market_ledger")
 }
