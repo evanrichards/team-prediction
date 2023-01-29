@@ -1,6 +1,7 @@
 import { signOut, useSession } from 'next-auth/react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { Heading2XL } from 'src/components/heading';
 import tw from 'tailwind-styled-components';
 
 const SITE_TITLE = 'Team Prediction';
@@ -26,7 +27,9 @@ export default function Layout({
         <meta name="og:title" content={SITE_TITLE} />
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
-      <Header>{home ? <>Home</> : <>Market</>}</Header>
+      <Header>
+        <Heading2XL>{home ? <>Home</> : <>Market</>}</Heading2XL>
+      </Header>
       <main>{children}</main>
       {!home && (
         <div>
@@ -41,12 +44,10 @@ export default function Layout({
 }
 
 const Header = tw.header`
-
 flex
 flex-col
 justify-between
 items-center
-
 `;
 
 const LayoutDiv = tw.div`
