@@ -43,10 +43,11 @@ items-center
 `;
 
 const LayoutDiv = tw.div`
+container
+mx-auto
 max-w-36rem
 py-0
 px-4
-mx-auto
 mt-12
 mb-24
 `;
