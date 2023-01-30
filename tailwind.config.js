@@ -1,9 +1,6 @@
 module.exports = {
   mode: 'jit',
-  content: [
-    './src/**/*.{js,ts,jsx,tsx}',
-    'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}',
-  ],
+  content: ['./src/**/*.{js,ts,jsx,tsx}'],
   darkMode: 'media', // or 'media' or 'class'
   theme: {
     extend: {},
@@ -16,6 +13,5 @@ module.exports = {
       prefix: false,
       defaultFlavour: 'macchiato',
     }),
-    require('flowbite/plugin'),
   ],
 };
