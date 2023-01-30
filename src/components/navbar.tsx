@@ -12,8 +12,12 @@ export default function Navbar() {
         <a
           href={
             (process.env.NEXT_PUBLIC_VERCEL_URL
-              ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
-              : 'http://localhost:3000') + '/'
+              ? `${
+                  process.env.NEXT_PUBLIC_VERCEL_URL.startsWith('http')
+                    ? ''
+                    : 'https://'
+                }${process.env.NEXT_PUBLIC_VERCEL_URL}`
+              : 'localhost:3000') + '/'
           }
           className="flex items-center"
         >
