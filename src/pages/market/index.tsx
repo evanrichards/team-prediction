@@ -1,5 +1,8 @@
 import { GetStaticPropsResult } from 'next';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import Layout from 'src/components/layout';
 import MarketCard from 'src/components/markets/market-card';
 import { Context } from 'src/server/context';
@@ -36,7 +39,18 @@ export default function MarketPage({
 }: {
   marketDataProps: LedgerEntry[];
 }) {
+  const session = useSession();
+  const router = useRouter();
+  useEffect(() => {
+    if (session.status === 'unauthenticated') {
+      router.push('/unauthorized');
+    }
+  }, [router, session.status]);
+
   const usersQuery = trpc.user.users.useQuery();
+  if (session.status !== 'authenticated') {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Layout pageTitle="Markets">

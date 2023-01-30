@@ -1,19 +1,5 @@
-// import { signIn, signOut, useSession } from 'next-auth/react';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import Layout from 'src/components/layout';
 
 export default function IndexPage() {
-  const { status } = useSession();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login');
-    }
-    if (status === 'authenticated') {
-      router.push('/market');
-    }
-  }, [router, status]);
-  return <div>Redirecting...</div>;
+  return <Layout pageTitle={''}>{}</Layout>;
 }

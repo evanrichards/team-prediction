@@ -1,11 +1,9 @@
-import { signOut, useSession } from 'next-auth/react';
 import Head from 'next/head';
-import Link from 'next/link';
 import { Heading2XL } from 'src/components/heading';
+import Navbar from 'src/components/navbar';
 import tw from 'tailwind-styled-components';
 
 const SITE_TITLE = 'Team Prediction';
-const NO_HOME_ROUTES = ['Markets', 'Team Prediction'];
 export default function Layout({
   children,
   pageTitle,
@@ -13,13 +11,12 @@ export default function Layout({
   children: React.ReactNode;
   pageTitle: string;
 }) {
-  const { data: session } = useSession();
   return (
     <LayoutDiv>
       <Head>
         <meta name="description" content="A prediction market tool for teams" />
         <link rel="icon" href="/favicon.ico" />
-        <title>{pageTitle}</title>
+        <title>{`${SITE_TITLE} ${pageTitle}`}</title>
         <meta
           property="og:image"
           content={`https://og-image.vercel.app/${encodeURI(
@@ -29,18 +26,11 @@ export default function Layout({
         <meta name="og:title" content={SITE_TITLE} />
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
+      <Navbar />
       <Header>
         <Heading2XL>{pageTitle}</Heading2XL>
       </Header>
       <main>{children}</main>
-      {!NO_HOME_ROUTES.includes(pageTitle) && (
-        <div>
-          Return to <Link href="/">Home</Link>
-        </div>
-      )}
-      {session && session.user && (
-        <button onClick={() => signOut()}> Sign out </button>
-      )}
     </LayoutDiv>
   );
 }
