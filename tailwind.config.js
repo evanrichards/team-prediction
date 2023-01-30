@@ -9,6 +9,7 @@ module.exports = {
   //   preflight: false,
   // },
   plugins: [
+    require('@tailwindcss/typography'),
     require('@catppuccin/tailwindcss')({
       prefix: false,
       defaultFlavour: 'macchiato',
