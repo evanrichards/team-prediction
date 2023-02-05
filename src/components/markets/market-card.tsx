@@ -1,6 +1,7 @@
 import nullthrows from 'nullthrows';
 import { useState } from 'react';
 import { filterUserLiveShares, parseLedger } from 'src/common/markets/utils';
+import Button from 'src/components/button/Button';
 import { LedgerEntry, MarketAlignment, MarketUuid } from 'src/types/market';
 import { trpc } from 'src/utils/trpc';
 import tw from 'tailwind-styled-components';
@@ -70,36 +71,31 @@ export default function MarketCard({
     <MarketCardComponent>
       Will users be able to create their own markets by Feb 14th? -
       {` ${marketValue}%`}
-      <div>
-        <MarketCardButton
-          onClick={handleBuyNo}
-          disabled={buyMutation.isLoading}
-        >
+      <div className="flex flex-row justify-around">
+        <Button onClick={handleBuyNo} disabled={buyMutation.isLoading}>
           Buy No
-        </MarketCardButton>
-        <MarketCardButton
-          onClick={handleBuyYes}
-          disabled={buyMutation.isLoading}
-        >
+        </Button>
+        <Button onClick={handleBuyYes} disabled={buyMutation.isLoading}>
           Buy Yes
-        </MarketCardButton>
-        <MarketCardButton
+        </Button>
+        <Button
           onClick={handleSellNo}
           disabled={sellMutation.isLoading || userLiveShares.noLiveCount < 1}
         >
           Sell No
-        </MarketCardButton>
-        <MarketCardButton
+        </Button>
+        <Button
           onClick={handleSellYes}
           disabled={sellMutation.isLoading || userLiveShares.yesLiveCount < 1}
         >
           Sell Yes
-        </MarketCardButton>
+        </Button>
       </div>
       <ul className="list-decimal">
         {state.map((market) => (
           <li key={market.uuid}>
             {market.marketAlignment} - {market.transactionType}
+            {market.userUuid === userUuid ? ' - You' : ''}
           </li>
         ))}
       </ul>
@@ -109,15 +105,4 @@ export default function MarketCard({
 
 const MarketCardComponent = tw.div`
   px-10
-`;
-
-const MarketCardButton = tw.button`
-  bg-blue-500
-  hover:bg-blue-700
-  text-white
-  font-bold
-  py-2
-  px-4
-  rounded
-  m-2
 `;
