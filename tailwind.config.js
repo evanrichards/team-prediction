@@ -5,10 +5,8 @@ module.exports = {
   theme: {
     extend: {},
   },
-  // corePlugins: {
-  //   preflight: false,
-  // },
   plugins: [
+    require('@tailwindcss/forms'),
     require('@tailwindcss/typography'),
     require('@catppuccin/tailwindcss')({
       prefix: false,
