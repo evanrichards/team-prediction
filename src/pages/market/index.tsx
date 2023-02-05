@@ -32,7 +32,7 @@ export default function MarketPage() {
         <div className="m-4">
           {usersQuery.isSuccess && (
             <div>
-              Other users in your team signed up:
+              <HeadingMd>{"Your team's users"}</HeadingMd>
               <ul className="list-disc">
                 {usersQuery.data?.map((user) => (
                   <li key={user.uuid}>{user.name}</li>
@@ -63,4 +63,5 @@ const MarketsContainer = tw.div`
   flex-row
   flex-wrap
   justify-center
+  justify-evenly
 `;
