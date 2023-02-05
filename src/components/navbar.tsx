@@ -2,6 +2,7 @@ import tw from 'tailwind-styled-components';
 import Image from 'next/image';
 import { signOut, signIn, useSession } from 'next-auth/react';
 import { Link } from 'src/components/Link';
+import ThemeSelect from 'src/components/theme-select';
 
 export default function Navbar() {
   const session = useSession();
@@ -62,6 +63,7 @@ export default function Navbar() {
             )}
           </ul>
         </div>
+        <ThemeSelect />
       </NavbarBrand>
     </NavbarComponent>
   );

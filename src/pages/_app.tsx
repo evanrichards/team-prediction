@@ -5,15 +5,21 @@ import type { AppType } from 'next/app';
 
 import { Analytics } from '@vercel/analytics/react';
 import { trpc } from 'src/utils/trpc';
+import { ThemeProvider } from 'src/context/theme-context';
+import { CookiesProvider } from 'react-cookie';
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
   return (
     <>
-      <SessionProvider session={session}>
-        <Component {...pageProps} />
-      </SessionProvider>
+      <CookiesProvider>
+        <SessionProvider session={session}>
+          <ThemeProvider>
+            <Component {...pageProps} />
+          </ThemeProvider>
+        </SessionProvider>
+      </CookiesProvider>
       <Analytics />
     </>
   );

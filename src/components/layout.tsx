@@ -1,6 +1,8 @@
 import Head from 'next/head';
+import { useContext, useEffect, useState } from 'react';
 import { Heading2XL } from 'src/components/heading';
 import Navbar from 'src/components/navbar';
+import { ThemeContext } from 'src/context/theme-context';
 import tw from 'tailwind-styled-components';
 
 const SITE_TITLE = 'Team Prediction';
@@ -11,28 +13,32 @@ export default function Layout({
   children: React.ReactNode;
   pageTitle: string;
 }) {
+  // Because our theme is set in a cookie, and we are using SSR for the first
+  // render, we need to force a rerender to get the correct theme, or else the
+  // server will think there is a mismatch between the server and client.
+  // The tiny flicker on every page load is the cost of not putting in @dark on
+  // every single element in the app.
+  const { currentTheme } = useContext(ThemeContext);
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => {
+    // This forces a rerender, so the date is rendered
+    // the second time but not the first
+    setHydrated(true);
+  }, []);
   return (
     <>
       <Head>
-        <meta name="description" content="A prediction market tool for teams" />
-        <link rel="icon" href="/favicon.ico" />
         <title>{`${SITE_TITLE} ${pageTitle}`}</title>
-        <meta
-          property="og:image"
-          content={`https://og-image.vercel.app/${encodeURI(
-            SITE_TITLE,
-          )}.png?theme=light&md=0&fontSize=75px&images=https%3A%2F%2Fassets.vercel.com%2Fimage%2Fupload%2Ffront%2Fassets%2Fdesign%2Fnextjs-black-logo.svg`}
-        />
-        <meta name="og:title" content={SITE_TITLE} />
-        <meta name="twitter:card" content="summary_large_image" />
       </Head>
-      <Navbar />
-      <LayoutDiv>
-        <Header>
-          <Heading2XL>{pageTitle}</Heading2XL>
-        </Header>
-        <main>{children}</main>
-      </LayoutDiv>
+      <div className={hydrated ? currentTheme : 'macchiato'}>
+        <Navbar />
+        <LayoutDiv>
+          <Header>
+            <Heading2XL>{pageTitle}</Heading2XL>
+          </Header>
+          <main>{children}</main>
+        </LayoutDiv>
+      </div>
     </>
   );
 }
@@ -45,6 +51,8 @@ items-center
 `;
 
 const LayoutDiv = tw.div`
+
+bg-base
 container
 mx-auto
 max-w-36rem

@@ -3,6 +3,9 @@
  */
 
 module.exports = {
+  compiler: {
+    styledComponents: true,
+  },
   async headers() {
     return [
       {

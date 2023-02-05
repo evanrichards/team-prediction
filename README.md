@@ -4,7 +4,7 @@
 
 - 🧙 E2E type safety withh [tRPC](https://trpc.io)
 - ⚡ Full-stack React with Next.js
-- ⚡ Postgres Database with Prisma ORM
+- ⚡ MySql Database with Prisma ORM, Planetscale production storage
 - 🔐 Authorization using [Auth0](auth0.com) via [next-auth](https://next-auth.js.org/)
 
 ## Setup
@@ -19,12 +19,15 @@ yarn dx
 ## Commands
 
 ```bash
-pnpm build      # runs `prisma generate` + `prisma migrate` + `next build`
-pnpm db-nuke    # resets local db
-pnpm dev        # starts next.js
-pnpm dx         # starts postgres db + runs migrations + seeds + starts next.js
-pnpm test-dev   # runs e2e tests on dev
-pnpm test-start # runs e2e tests on `next start` - build required before
-pnpm test:unit  # runs normal jest unit tests
-pnpm test:e2e   # runs e2e tests
+yarn build      # runs `prisma generate` + `prisma migrate` + `next build`
+yarn db-nuke    # resets local db
+yarn dev        # starts next.js
+yarn prisma:dev # applies new changes to db, makes a migration, regens client
 ```
+
+## Theming
+
+We are using catppuccin theme for this project. I have found the following
+links very helpful for styling:
+
+- [Catppucin Style Guide](https://github.com/catppuccin/catppuccin/blob/main/docs/style-guide.md)
