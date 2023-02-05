@@ -1,6 +1,6 @@
 import tw from 'tailwind-styled-components';
 import Image from 'next/image';
-import { signOut, useSession } from 'next-auth/react';
+import { signOut, signIn, useSession } from 'next-auth/react';
 
 export default function Navbar() {
   const session = useSession();
@@ -58,8 +58,13 @@ export default function Navbar() {
         <div className="hidden w-full md:block md:w-auto" id="navbar-default">
           <ul className="mt-4 flex flex-col rounded-lg border border-gray-100 bg-gray-50 p-4 dark:border-gray-700 dark:bg-base md:mt-0 md:flex-row md:space-x-8 md:border-0 md:bg-white md:text-sm md:font-medium md:dark:bg-base">
             <li>
-              <NavbarOption href="/market" aria-current="page">
+              <NavbarOption href="/" aria-current="page">
                 Home
+              </NavbarOption>
+            </li>
+            <li>
+              <NavbarOption href="/market" aria-current="page">
+                Markets
               </NavbarOption>
             </li>
             <li>
@@ -76,7 +81,9 @@ export default function Navbar() {
               </li>
             ) : (
               <li>
-                <NavbarOption href="/login">Sign In</NavbarOption>
+                <NavbarOption href="#" onClick={() => signIn()}>
+                  Sign In
+                </NavbarOption>
               </li>
             )}
           </ul>
