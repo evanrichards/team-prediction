@@ -1,49 +1,55 @@
 import { FieldError, FieldErrorsImpl, Merge, useForm } from 'react-hook-form';
 import Layout from 'src/components/layout';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import tw from 'tailwind-styled-components';
-import Button from 'src/components/button/Button';
+import Button from 'src/components/Button';
+import { CreateMarketInput } from 'src/types/market';
+import { trpc } from 'src/utils/trpc';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
-const newMarketSchema = z.object({
-  question: z
-    .string()
-    .trim()
-    .min(1, { message: 'A market requires a question' }),
-  description: z
-    .string()
-    .trim()
-    .min(1, { message: 'A description is required' }),
-});
 export default function NewMarketPage() {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(newMarketSchema),
+    resolver: zodResolver(CreateMarketInput),
   });
+  const router = useRouter();
+  const createMarket = trpc.market.create.useMutation();
+  useEffect(() => {
+    if (createMarket.status === 'success') {
+      router.push(`/market/${createMarket.data}`);
+    }
+  }, [router, createMarket.status, createMarket.data]);
   return (
     <Layout pageTitle={'Create New Market'}>
       <FormContainer>
         <form
           onSubmit={handleSubmit((d) => {
-            const a = newMarketSchema.parse(d);
-            console.log(a);
+            const a = CreateMarketInput.parse(d);
+            createMarket.mutate(a);
           })}
         >
           <FormItem>
-            <label htmlFor="question">Question</label>
-            <FormInput type="text" {...register('question')} />
+            <label>
+              Question
+              <FormInput type="text" {...register('question')} />
+            </label>
             <ErrorMessage fieldError={errors.question} />
           </FormItem>
           <FormItem>
-            <label htmlFor="description">Description</label>
-            <FormTextArea {...register('description')} />
+            <label>
+              Description
+              <FormTextArea {...register('description')} />
+            </label>
             <ErrorMessage fieldError={errors.description} />
           </FormItem>
           <FormItem>
-            <Button type="submit">Submit</Button>
+            <Button type="submit" disabled={createMarket.isLoading}>
+              Submit
+            </Button>
           </FormItem>
         </form>
       </FormContainer>

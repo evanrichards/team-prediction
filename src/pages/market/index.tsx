@@ -1,46 +1,17 @@
-import { GetStaticPropsResult } from 'next';
 import { useSession } from 'next-auth/react';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
+import Button from 'src/components/Button';
+import { HeadingMd } from 'src/components/heading';
 import Layout from 'src/components/layout';
-import MarketCard from 'src/components/markets/market-card';
-import { Context } from 'src/server/context';
-import { MarketService } from 'src/server/markets/markets.service';
-import { LedgerEntry, MarketUuid } from 'src/types/market';
+import { Link } from 'src/components/Link';
 import { trpc } from 'src/utils/trpc';
-import { NIL as NIL_UUID } from 'uuid';
+import tw from 'tailwind-styled-components';
 
-const ONE_MARKET = MarketUuid.parse(NIL_UUID);
-
-export const getServerSideProps = async (
-  ctx: Context,
-): Promise<
-  GetStaticPropsResult<
-    | {
-        marketDataProps: LedgerEntry[];
-      }
-    | undefined
-  >
-> => {
-  const marketService = new MarketService();
-  const marketDataProps = await marketService.getActivityForMarket(
-    ctx,
-    ONE_MARKET,
-  );
-
-  return {
-    props: { marketDataProps },
-  };
-};
-
-export default function MarketPage({
-  marketDataProps,
-}: {
-  marketDataProps: LedgerEntry[];
-}) {
+export default function MarketPage() {
   const session = useSession();
   const router = useRouter();
+  const markets = trpc.market.list.useQuery();
   useEffect(() => {
     if (session.status === 'unauthenticated') {
       router.push('/unauthorized');
@@ -54,20 +25,42 @@ export default function MarketPage({
 
   return (
     <Layout pageTitle="Markets">
-      <h1>The Market Page</h1>
-      <p>Here is where you will be able to see all the markets</p>
-      <Image priority src="/icon.png" alt="Logo" width={200} height={200} />
-      {usersQuery.status === 'success' && (
-        <div>
-          Other users in your team signed up:
-          <ul className="list-disc">
-            {usersQuery.data?.map((user) => (
-              <li key={user.uuid}>{user.name}</li>
-            ))}
-          </ul>
+      <div className="flex flex-row justify-center">
+        <Button href="/market/new">Create new market</Button>
+      </div>
+      <MarketsContainer>
+        <div className="m-4">
+          {usersQuery.isSuccess && (
+            <div>
+              Other users in your team signed up:
+              <ul className="list-disc">
+                {usersQuery.data?.map((user) => (
+                  <li key={user.uuid}>{user.name}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
-      )}
-      <MarketCard marketUuid={ONE_MARKET} marketDataProps={marketDataProps} />
+        {markets.isSuccess && (
+          <div className="m-4">
+            <HeadingMd>{"Your team's markets"}</HeadingMd>
+            <ul className="list-disc">
+              {markets.data.map((market) => (
+                <li key={market.uuid}>
+                  <Link href={`/market/${market.uuid}`}>{market.question}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </MarketsContainer>
     </Layout>
   );
 }
+
+const MarketsContainer = tw.div`
+  flex
+  flex-row
+  flex-wrap
+  justify-center
+`;
