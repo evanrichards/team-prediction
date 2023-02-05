@@ -1,64 +1,65 @@
 import nullthrows from 'nullthrows';
 import { useState } from 'react';
 import { filterUserLiveShares, parseLedger } from 'src/common/markets/utils';
-import Button from 'src/components/button/Button';
-import { LedgerEntry, MarketAlignment, MarketUuid } from 'src/types/market';
+import Button from 'src/components/Button';
+import { MarketAlignment, MarketWithActivity } from 'src/types/market';
 import { trpc } from 'src/utils/trpc';
 import tw from 'tailwind-styled-components';
 
 export default function MarketCard({
-  marketUuid,
-  marketDataProps,
+  marketData,
 }: {
-  marketUuid: MarketUuid;
-  marketDataProps: LedgerEntry[];
+  marketData: MarketWithActivity;
 }) {
   const userQuery = trpc.user.me.useQuery();
-  const [state, setState] = useState(marketDataProps);
+  const [ledger, setLedger] = useState(marketData.marketLedger);
   const buyMutation = trpc.market.buySharesInMarket.useMutation({
     onSuccess: (data) => {
-      setState(data);
+      setLedger(data);
     },
   });
   const sellMutation = trpc.market.sellSharesInMarket.useMutation({
     onSuccess: (data) => {
-      setState(data);
+      setLedger(data);
     },
   });
   const handleBuyYes = () => {
     buyMutation.mutate({
-      marketUuid,
+      marketUuid: marketData.uuid,
       shares: 1,
       alignment: MarketAlignment.enum.YES,
     });
   };
   const handleBuyNo = () => {
     buyMutation.mutate({
-      marketUuid,
+      marketUuid: marketData.uuid,
       shares: 1,
       alignment: MarketAlignment.enum.NO,
     });
   };
   const handleSellYes = () => {
     sellMutation.mutate({
-      marketUuid,
+      marketUuid: marketData.uuid,
       shares: 1,
       alignment: MarketAlignment.enum.YES,
     });
   };
   const handleSellNo = () => {
     sellMutation.mutate({
-      marketUuid,
+      marketUuid: marketData.uuid,
       shares: 1,
       alignment: MarketAlignment.enum.NO,
     });
   };
-  const splitLedger = parseLedger(state);
-  const marketValue = Math.round(
-    ((splitLedger.yesBuyCount - splitLedger.yesSellCount) /
-      splitLedger.totalLiveCount) *
-      100,
-  );
+  const splitLedger = parseLedger(ledger);
+  const marketValue =
+    splitLedger.totalLiveCount > 0
+      ? Math.round(
+          ((splitLedger.yesBuyCount - splitLedger.yesSellCount) /
+            splitLedger.totalLiveCount) *
+            100,
+        )
+      : 50;
   if (userQuery.isLoading) {
     return <div>Loading...</div>;
   }
@@ -66,11 +67,11 @@ export default function MarketCard({
     return <div>Not authenticated</div>;
   }
   const userUuid = nullthrows(userQuery.data?.uuid);
-  const userLiveShares = filterUserLiveShares(state, userUuid);
+  const userLiveShares = filterUserLiveShares(ledger, userUuid);
   return (
     <MarketCardComponent>
-      Will users be able to create their own markets by Feb 14th? -
-      {` ${marketValue}%`}
+      {marketData.question} -{` ${marketValue}%`}
+      <p>{marketData.description}</p>
       <div className="flex flex-row justify-around">
         <Button onClick={handleBuyNo} disabled={buyMutation.isLoading}>
           Buy No
@@ -92,7 +93,7 @@ export default function MarketCard({
         </Button>
       </div>
       <ul className="list-decimal">
-        {state.map((market) => (
+        {ledger.map((market) => (
           <li key={market.uuid}>
             {market.marketAlignment} - {market.transactionType}
             {market.userUuid === userUuid ? ' - You' : ''}

@@ -1,7 +1,7 @@
 import tw from 'tailwind-styled-components';
 import Image from 'next/image';
 import { signOut, signIn, useSession } from 'next-auth/react';
-import Link from 'next/link';
+import { Link } from 'src/components/Link';
 
 export default function Navbar() {
   const session = useSession();
@@ -10,6 +10,7 @@ export default function Navbar() {
     <NavbarComponent>
       <NavbarBrand>
         <Link
+          $afterContent={false}
           href={
             (process.env.NEXT_PUBLIC_VERCEL_URL
               ? `${
@@ -35,11 +36,6 @@ export default function Navbar() {
         </Link>
         <div>
           <ul className="flex flex-row rounded-lg p-4 text-sm font-medium ">
-            <li>
-              <NavbarOption href="/" aria-current="page">
-                Home
-              </NavbarOption>
-            </li>
             <li>
               <NavbarOption href="/market" aria-current="page">
                 Markets
@@ -86,7 +82,7 @@ items-center
 justify-between
 `;
 
-const NavbarOption = tw.a`
+const NavbarOption = tw(Link)`
 block
 rounded
 py-2

@@ -1,4 +1,4 @@
-import { UserUuid } from 'src/types/user';
+import { User, UserUuid } from 'src/types/user';
 import { z } from 'zod';
 
 export const LedgerUuid = z.string().uuid().brand('ledger');
@@ -36,3 +36,27 @@ export const LedgerEntry = z.object({
   createdAt: z.string().datetime(),
 });
 export type LedgerEntry = z.infer<typeof LedgerEntry>;
+
+export const Market = z.object({
+  uuid: MarketUuid,
+  question: z.string().trim().min(1, { message: 'Question is required' }),
+  description: z.string().trim().min(1, { message: 'Description is required' }),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+  resolvedAt: z.string().datetime().optional(),
+});
+export type Market = z.infer<typeof Market>;
+
+export const CreateMarketInput = Market.omit({
+  uuid: true,
+  createdAt: true,
+  updatedAt: true,
+  resolvedAt: true,
+});
+export type CreateMarketInput = z.infer<typeof CreateMarketInput>;
+
+export const MarketWithActivity = Market.extend({
+  createdByUser: User,
+  marketLedger: z.array(LedgerEntry),
+});
+export type MarketWithActivity = z.infer<typeof MarketWithActivity>;
