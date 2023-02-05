@@ -111,8 +111,9 @@ export default NextAuth({
       console.log('⚠️ User not allowed to sign in', user);
       return '/unauthorized';
     },
-    async redirect() {
-      return '/';
+    async redirect({ url, baseUrl }) {
+      console.log('redirect', url, baseUrl);
+      return '/market';
     },
   },
 });
