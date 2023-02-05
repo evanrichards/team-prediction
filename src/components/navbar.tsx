@@ -35,8 +35,8 @@ export default function Navbar() {
             Team Prediction
           </span>
         </Link>
-        <div>
-          <ul className="flex flex-row rounded-lg p-4 text-sm font-medium ">
+        <div className="flex-grow">
+          <ul className="flex flex-row justify-end rounded-lg p-4 text-sm font-medium ">
             <li>
               <NavbarOption href="/market" aria-current="page">
                 Markets
