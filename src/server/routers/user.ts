@@ -1,30 +1,17 @@
-import { prisma } from 'src/server/prisma';
+import nullthrows from 'nullthrows';
 import { authedProcedure, router } from 'src/server/trpc';
 import { UserService } from 'src/server/users/user.service';
+import { User } from 'src/types/user';
 
 const userService = new UserService();
 
 export const userRouter = router({
-  me: authedProcedure.query(async ({ ctx }) => {
-    if (!ctx.user?.email) {
-      throw new Error('no auth');
-    }
-    const resp = await userService.getCurrentUser(ctx.user.email);
-    return resp;
-  }),
-  users: authedProcedure.query(async ({ ctx }) => {
-    const userEmail = ctx.session?.user?.email;
-    if (!userEmail) {
-      throw new Error('no auth');
-    }
-    const domain = userEmail.split('@')[1];
-    const resp = await prisma.user.findMany({
-      where: {
-        email: {
-          endsWith: domain,
-        },
-      },
-    });
-    return resp;
-  }),
+  me: authedProcedure
+    .output(User)
+    .query(async ({ ctx }) =>
+      userService.getCurrentUser(nullthrows(ctx.user?.email)),
+    ),
+  users: authedProcedure
+    .output(User.array())
+    .query(async ({ ctx }) => userService.list(ctx)),
 });
