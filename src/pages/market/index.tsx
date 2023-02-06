@@ -5,9 +5,63 @@ import Button from 'src/components/Button';
 import { HeadingMd } from 'src/components/heading';
 import Layout from 'src/components/layout';
 import { Link } from 'src/components/Link';
+import { Market } from 'src/types/market';
+import { User } from 'src/types/user';
 import { trpc } from 'src/utils/trpc';
 import tw from 'tailwind-styled-components';
 
+function UlLoading() {
+  return (
+    <UlLoadingStyled className="list-disc">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <li key={i} className={'my-1 min-w-full rounded-lg bg-overlay0'}></li>
+      ))}
+    </UlLoadingStyled>
+  );
+}
+
+const UlLoadingStyled = tw.ul`
+animate-pulse
+list-disc
+`;
+
+function UsersContainer({ users }: { users?: User[] }) {
+  return (
+    <div>
+      <HeadingMd>{"Your team's users"}</HeadingMd>
+      {users === undefined ? (
+        <UlLoading />
+      ) : (
+        <ul className="list-disc">
+          {users.map((user) => (
+            <li key={user.uuid} className={'my-1'}>
+              {user.name}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+function MarketsListContainer({ markets }: { markets: Market[] | undefined }) {
+  return (
+    <div>
+      <HeadingMd>{"Your team's markets"}</HeadingMd>
+      {markets === undefined ? (
+        <UlLoading />
+      ) : (
+        <ul className="list-disc">
+          {markets.map((market) => (
+            <li key={market.uuid} className={'my-1'}>
+              <Link href={`/market/${market.uuid}`}>{market.question}</Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
 export default function MarketPage() {
   const session = useSession();
   const router = useRouter();
@@ -29,30 +83,8 @@ export default function MarketPage() {
         <Button href="/market/new">Create new market</Button>
       </div>
       <MarketsContainer>
-        <div className="m-4">
-          {usersQuery.isSuccess && (
-            <div>
-              <HeadingMd>{"Your team's users"}</HeadingMd>
-              <ul className="list-disc">
-                {usersQuery.data?.map((user) => (
-                  <li key={user.uuid}>{user.name}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-        {markets.isSuccess && (
-          <div className="m-4">
-            <HeadingMd>{"Your team's markets"}</HeadingMd>
-            <ul className="list-disc">
-              {markets.data.map((market) => (
-                <li key={market.uuid}>
-                  <Link href={`/market/${market.uuid}`}>{market.question}</Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <UsersContainer users={usersQuery.data} />
+        <MarketsListContainer markets={markets.data} />
       </MarketsContainer>
     </Layout>
   );
