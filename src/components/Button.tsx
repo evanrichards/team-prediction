@@ -1,10 +1,12 @@
 import Link from 'next/link';
 import tw from 'tailwind-styled-components';
 
+type Flavor = 'primary' | 'secondary' | 'danger';
+
 type ButtonProps = {
   href?: string;
   onClick?: () => void;
-  flavor?: 'primary' | 'secondary';
+  flavor?: Flavor;
   disabled?: boolean;
   type?: 'button' | 'submit' | 'reset';
 };
@@ -46,7 +48,7 @@ text-lg
 `;
 
 const LinkButton = tw(Link)<{
-  $flavor?: 'primary' | 'secondary';
+  $flavor?: Flavor;
 }>`
 ${() => buttonStyles}
 ${(p) =>
@@ -54,12 +56,22 @@ ${(p) =>
 `;
 
 const ButtonInner = tw.button<{
-  $flavor?: 'primary' | 'secondary';
+  $flavor?: Flavor;
   disabled?: boolean;
 }>`
 ${() => buttonStyles}
-${(p) =>
-  p.$flavor && p.$flavor === 'secondary' ? 'bg-surface0' : 'bg-lavender'}
+${(p) => {
+  switch (p.$flavor) {
+    case 'primary':
+      return 'bg-lavender';
+    case 'secondary':
+      return 'bg-surface0';
+    case 'danger':
+      return 'bg-maroon';
+    default:
+      return 'bg-lavender';
+  }
+}}
 ${(p) => p.disabled && 'hover:bg-surface1'}
 ${(p) => p.disabled && 'bg-surface1'}
 `;

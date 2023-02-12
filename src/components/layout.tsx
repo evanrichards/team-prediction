@@ -11,7 +11,7 @@ export default function Layout({
   pageTitle,
 }: {
   children: React.ReactNode;
-  pageTitle: string;
+  pageTitle?: string;
 }) {
   // Because our theme is set in a cookie, and we are using SSR for the first
   // render, we need to force a rerender to get the correct theme, or else the
@@ -33,9 +33,11 @@ export default function Layout({
       <div className={hydrated ? currentTheme : 'macchiato'}>
         <Navbar />
         <LayoutDiv>
-          <Header>
-            <Heading2XL>{pageTitle}</Heading2XL>
-          </Header>
+          {pageTitle && (
+            <Header>
+              <Heading2XL>{pageTitle}</Heading2XL>
+            </Header>
+          )}
           <main>{children}</main>
         </LayoutDiv>
       </div>
@@ -51,7 +53,6 @@ items-center
 `;
 
 const LayoutDiv = tw.div`
-
 bg-base
 container
 mx-auto
