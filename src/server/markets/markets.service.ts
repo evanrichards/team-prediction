@@ -1,4 +1,8 @@
-import { filterUserLiveShares, parseLedger } from 'src/common/markets/utils';
+import {
+  filterUserLiveShares,
+  marketValueForLedger,
+  parseLedger,
+} from 'src/common/markets/utils';
 import { Context } from 'src/server/context';
 import { prisma } from 'src/server/prisma';
 import {
@@ -25,7 +29,6 @@ export class MarketService {
         createdByUserUuid: userUuid,
         question: input.question,
         description: input.description,
-        closedAt: input.closedAt,
       },
     });
     return MarketUuid.parse(market.uuid);
@@ -48,15 +51,19 @@ export class MarketService {
     if (!market) {
       throw new Error('market not found');
     }
+    const ledger = market.marketLedger.map((entry) =>
+      LedgerEntry.parse({
+        ...entry,
+        createdAt: entry.createdAt.toISOString(),
+      }),
+    );
     return MarketWithActivity.parse({
       ...market,
       resolvedAt: market.resolvedAt?.toISOString(),
       createdAt: market.createdAt.toISOString(),
       updatedAt: market.updatedAt.toISOString(),
-      marketLedger: market.marketLedger.map((entry) => ({
-        ...entry,
-        createdAt: entry.createdAt.toISOString(),
-      })),
+      marketLedger: ledger,
+      currentValue: marketValueForLedger(ledger),
       createdByUser: User.parse({
         ...market.createdByUser,
         createdAt: market.createdByUser.createdAt.toISOString(),
@@ -73,17 +80,30 @@ export class MarketService {
       orderBy: {
         createdAt: 'desc',
       },
+
+      include: {
+        marketLedger: true,
+      },
     });
-    return markets.map((market) =>
-      Market.parse({
+    return markets.map((market) => {
+      const currentValue = marketValueForLedger(
+        market.marketLedger.map((entry) =>
+          LedgerEntry.parse({
+            ...entry,
+            createdAt: entry.createdAt.toISOString(),
+          }),
+        ),
+      );
+      return Market.parse({
         ...market,
         resolvedAt: market.resolvedAt?.toISOString(),
         createdAt: market.createdAt.toISOString(),
         updatedAt: market.updatedAt.toISOString(),
         resolutionAlignment: market.resolutionAlignment?.toString(),
         closedAt: market.closedAt?.toISOString(),
-      }),
-    );
+        currentValue,
+      });
+    });
   }
 
   async getActivityForMarket(_ctx: Context, marketUuid: MarketUuid) {

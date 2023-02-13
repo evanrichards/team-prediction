@@ -41,6 +41,7 @@ export const Market = z.object({
   uuid: MarketUuid,
   question: z.string().trim().min(1, { message: 'Question is required' }),
   description: z.string().trim().min(1, { message: 'Description is required' }),
+  currentValue: z.number(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
   resolvedAt: z.string().datetime().optional(),
@@ -49,12 +50,9 @@ export const Market = z.object({
 });
 export type Market = z.infer<typeof Market>;
 
-export const CreateMarketInput = Market.omit({
-  uuid: true,
-  createdAt: true,
-  updatedAt: true,
-  resolvedAt: true,
-  resolutionAlignment: true,
+export const CreateMarketInput = Market.pick({
+  question: true,
+  description: true,
 });
 export type CreateMarketInput = z.infer<typeof CreateMarketInput>;
 
