@@ -49,4 +49,7 @@ export const marketRouter = router({
     .mutation(async ({ ctx, input }) =>
       marketService.sellSharesInMarket(ctx, input),
     ),
+  closeMarket: authedProcedure
+    .input(MarketUuid)
+    .mutation(async ({ ctx, input }) => marketService.closeMarket(ctx, input)),
 });

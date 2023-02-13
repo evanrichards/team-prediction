@@ -6,6 +6,7 @@ module.exports = {
     extend: {},
   },
   plugins: [
+    require('@headlessui/tailwindcss'),
     require('@tailwindcss/forms'),
     require('@tailwindcss/typography'),
     require('@catppuccin/tailwindcss')({
