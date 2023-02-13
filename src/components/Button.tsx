@@ -24,6 +24,7 @@ export default function Button({
   }
   return (
     <ButtonInner
+      onClick={props.onClick}
       type={props.type}
       disabled={props.disabled}
       $flavor={props.flavor}

@@ -10,6 +10,11 @@ export type MarketUuid = z.infer<typeof MarketUuid>;
 export const MarketAlignment = z.enum(['YES', 'NO']);
 export type MarketAlignment = z.infer<typeof MarketAlignment>;
 
+export const MarketResolutionAlignment = z.enum(['YES', 'NO', 'NONE']);
+export type MarketResolutionAlignment = z.infer<
+  typeof MarketResolutionAlignment
+>;
+
 export const BuySharesInMarketInput = z.object({
   alignment: MarketAlignment,
   marketUuid: MarketUuid,
@@ -61,3 +66,9 @@ export const MarketWithActivity = Market.extend({
   marketLedger: z.array(LedgerEntry),
 });
 export type MarketWithActivity = z.infer<typeof MarketWithActivity>;
+
+export const ResolveMarketInput = z.object({
+  marketUuid: MarketUuid,
+  resolutionAlignment: MarketResolutionAlignment,
+});
+export type ResolveMarketInput = z.infer<typeof ResolveMarketInput>;
