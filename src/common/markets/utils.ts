@@ -87,3 +87,13 @@ export function marketValueForLedger(ledger: LedgerEntry[]): number {
     ((split.yesBuyCount - split.yesSellCount) * 100) / split.totalLiveCount
   );
 }
+
+export function marketValueDisplay(marketValue: number): string {
+  if (
+    (marketValue < 100 && marketValue > 95) ||
+    (marketValue > 0 && marketValue < 5)
+  ) {
+    return `${marketValue.toFixed(2)}%`;
+  }
+  return `${marketValue.toFixed(0)}%`;
+}

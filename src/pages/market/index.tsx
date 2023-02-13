@@ -1,6 +1,7 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
+import { marketValueDisplay } from 'src/common/markets/utils';
 import Button from 'src/components/Button';
 import { HeadingMd } from 'src/components/heading';
 import Layout from 'src/components/layout';
@@ -54,7 +55,9 @@ function MarketsListContainer({ markets }: { markets: Market[] | undefined }) {
         <ul className="list-disc">
           {markets.map((market) => (
             <li key={market.uuid} className={'my-1'}>
-              <Link href={`/market/${market.uuid}`}>{market.question}</Link>
+              <Link href={`/market/${market.uuid}`}>
+                {market.question} - {marketValueDisplay(market.currentValue)}
+              </Link>
             </li>
           ))}
         </ul>
@@ -79,12 +82,16 @@ export default function MarketPage() {
 
   return (
     <Layout pageTitle="Markets">
-      <div className="flex flex-row justify-center">
+      <div className="flex justify-center">
         <Button href="/market/new">Create new market</Button>
       </div>
       <MarketsContainer>
-        <UsersContainer users={usersQuery.data} />
-        <MarketsListContainer markets={markets.data} />
+        <div className="grow-0 sm:basis-1/2">
+          <UsersContainer users={usersQuery.data} />
+        </div>
+        <div className="grow-0 sm:basis-1/2">
+          <MarketsListContainer markets={markets.data} />
+        </div>
       </MarketsContainer>
     </Layout>
   );
@@ -92,8 +99,5 @@ export default function MarketPage() {
 
 const MarketsContainer = tw.div`
   flex
-  flex-row
-  flex-wrap
-  justify-center
   justify-evenly
 `;

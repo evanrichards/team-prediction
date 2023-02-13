@@ -1,5 +1,6 @@
 import {
   filterUserLiveShares,
+  marketValueDisplay,
   marketValueForLedger,
 } from 'src/common/markets/utils';
 import Button from 'src/components/Button';
@@ -35,6 +36,9 @@ ChartJS.register(
   TimeScale,
 );
 export const options = {
+  animation: {
+    duration: 0,
+  },
   ticks: {
     source: 'data',
   },
@@ -145,7 +149,7 @@ export default function MarketCard({
             <p className="prose text-current">{marketData.description}</p>
             <div className="flex flex-wrap">
               <span className="title-font text-2xl font-medium text-white">
-                {marketValue}%
+                {marketValueDisplay(marketValue)}
               </span>
               <div className="ml-auto flex gap-4 text-white">
                 <Button
