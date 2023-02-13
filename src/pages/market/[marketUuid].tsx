@@ -30,6 +30,11 @@ export default function MarketPage() {
       setMutating(false);
     },
   });
+  const closeMarketMutation = trpc.market.closeMarket.useMutation({
+    onSuccess: () => {
+      setMutating(false);
+    },
+  });
   const handleBuyYes = () => {
     setMutating(true);
     buyMutation.mutate({
@@ -62,6 +67,12 @@ export default function MarketPage() {
       alignment: MarketAlignment.enum.NO,
     });
   };
+
+  const handleCloseMarket = () => {
+    setMutating(true);
+    closeMarketMutation.mutate(marketUuid);
+  };
+
   if (
     marketQuery.status !== 'success' ||
     marketQuery.data == null ||
@@ -88,9 +99,9 @@ export default function MarketPage() {
             handleResolveMarket={() => {
               console.log('resolve market');
             }}
-            handleCloseMarket={() => {
-              console.log('close market');
-            }}
+            handleCloseMarket={handleCloseMarket}
+            marketIsClosed={marketQuery.data?.closedAt !== undefined}
+            marketIsResolved={marketQuery.data?.resolvedAt !== undefined}
           />
         )}
     </Layout>

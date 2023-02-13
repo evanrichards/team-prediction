@@ -90,7 +90,6 @@ export default function MarketCard({
   mutating: boolean;
   userUuid: UserUuid;
 }) {
-  console.log('rendering market card');
   const userLiveShares = filterUserLiveShares(ledger, userUuid);
   const marketValue = marketValueForLedger(ledger);
   const graphData = createGraphData({ ...marketData, marketLedger: ledger });
