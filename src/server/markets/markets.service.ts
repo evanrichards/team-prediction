@@ -13,6 +13,7 @@ import {
   MarketAlignment,
   MarketUuid,
   MarketWithActivity,
+  ResolveMarketInput,
   SellSharesInMarketInput,
   TransactionType,
 } from 'src/types/market';
@@ -205,6 +206,37 @@ export class MarketService {
       },
       data: {
         closedAt: new Date(),
+      },
+    });
+  }
+
+  async resolveMarket(ctx: Context, input: ResolveMarketInput) {
+    if (!ctx.user) {
+      throw new Error('no auth');
+    }
+    const { uuid: userUuid } = ctx.user;
+    const market = await prisma.market.findUnique({
+      where: {
+        uuid: input.marketUuid,
+      },
+    });
+    if (!market) {
+      throw new Error('market not found');
+    }
+    if (market.createdByUserUuid !== userUuid) {
+      throw new Error('not authorized to close market');
+    }
+    if (market.resolvedAt) {
+      throw new Error('market already resolved');
+    }
+    await prisma.market.update({
+      where: {
+        uuid: input.marketUuid,
+      },
+      data: {
+        resolvedAt: new Date(),
+        closedAt: market.closedAt ? undefined : new Date(),
+        resolutionAlignment: input.resolutionAlignment,
       },
     });
   }

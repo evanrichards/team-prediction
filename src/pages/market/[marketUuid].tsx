@@ -3,20 +3,24 @@ import { useEffect, useState } from 'react';
 import Layout from 'src/components/layout';
 import MarketAdminCard from 'src/components/markets/market-admin-card';
 import MarketCard from 'src/components/markets/market-card';
-import { MarketAlignment, MarketUuid } from 'src/types/market';
+import {
+  MarketAlignment,
+  MarketResolutionAlignment,
+  MarketUuid,
+} from 'src/types/market';
 import { trpc } from 'src/utils/trpc';
 
 export default function MarketPage() {
   const router = useRouter();
   const { marketUuid: marketUuidString } = router.query;
   const marketUuid = MarketUuid.parse(marketUuidString);
-  console.log('fetching market', marketUuid);
   const marketQuery = trpc.market.get.useQuery(marketUuid);
   const userQuery = trpc.user.me.useQuery();
   const [ledger, setLedger] = useState(marketQuery.data?.marketLedger ?? []);
   useEffect(() => {
     setLedger(marketQuery.data?.marketLedger ?? []);
   }, [marketQuery.data?.marketLedger]);
+
   const [mutating, setMutating] = useState(false);
   const buyMutation = trpc.market.buySharesInMarket.useMutation({
     onSuccess: (data) => {
@@ -33,6 +37,13 @@ export default function MarketPage() {
   const closeMarketMutation = trpc.market.closeMarket.useMutation({
     onSuccess: () => {
       setMutating(false);
+      marketQuery.refetch();
+    },
+  });
+  const resolveMarketMutation = trpc.market.resolveMarket.useMutation({
+    onSuccess: () => {
+      setMutating(false);
+      marketQuery.refetch();
     },
   });
   const handleBuyYes = () => {
@@ -67,10 +78,18 @@ export default function MarketPage() {
       alignment: MarketAlignment.enum.NO,
     });
   };
-
   const handleCloseMarket = () => {
     setMutating(true);
     closeMarketMutation.mutate(marketUuid);
+  };
+  const handleResolveMarket = (
+    resolutionAlignment: MarketResolutionAlignment,
+  ) => {
+    setMutating(true);
+    resolveMarketMutation.mutate({
+      marketUuid,
+      resolutionAlignment,
+    });
   };
 
   if (
@@ -96,9 +115,7 @@ export default function MarketPage() {
         marketQuery.data !== undefined &&
         userQuery.data?.uuid === marketQuery.data?.createdByUser.uuid && (
           <MarketAdminCard
-            handleResolveMarket={() => {
-              console.log('resolve market');
-            }}
+            handleResolveMarket={handleResolveMarket}
             handleCloseMarket={handleCloseMarket}
             marketIsClosed={marketQuery.data?.closedAt !== undefined}
             marketIsResolved={marketQuery.data?.resolvedAt !== undefined}

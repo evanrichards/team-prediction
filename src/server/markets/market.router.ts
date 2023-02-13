@@ -7,6 +7,7 @@ import {
   Market,
   MarketUuid,
   MarketWithActivity,
+  ResolveMarketInput,
   SellSharesInMarketInput,
 } from 'src/types/market';
 import { z } from 'zod';
@@ -52,4 +53,9 @@ export const marketRouter = router({
   closeMarket: authedProcedure
     .input(MarketUuid)
     .mutation(async ({ ctx, input }) => marketService.closeMarket(ctx, input)),
+  resolveMarket: authedProcedure
+    .input(ResolveMarketInput)
+    .mutation(async ({ ctx, input }) =>
+      marketService.resolveMarket(ctx, input),
+    ),
 });
