@@ -142,12 +142,12 @@ export default function MarketCard({
                 </MarketType>
               </span>
             </div>
-            <MarketTitle className="title-font mb-1 text-3xl font-medium text-white">
+            <MarketTitle className="title-font mb-1 text-3xl font-medium text-rosewater">
               {marketData.question}
             </MarketTitle>
             <p className="prose text-current">{marketData.description}</p>
             <div className="flex flex-wrap">
-              <span className="title-font text-2xl font-medium text-white">
+              <span className="title-font text-2xl font-medium text-rosewater">
                 {marketValueDisplay(marketValue)}
               </span>
               <div className="ml-auto flex gap-4 text-white">
