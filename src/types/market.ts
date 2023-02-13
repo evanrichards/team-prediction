@@ -44,6 +44,8 @@ export const Market = z.object({
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
   resolvedAt: z.string().datetime().optional(),
+  closedAt: z.string().datetime().optional(),
+  resolutionAlignment: MarketAlignment.optional(),
 });
 export type Market = z.infer<typeof Market>;
 
@@ -52,6 +54,7 @@ export const CreateMarketInput = Market.omit({
   createdAt: true,
   updatedAt: true,
   resolvedAt: true,
+  resolutionAlignment: true,
 });
 export type CreateMarketInput = z.infer<typeof CreateMarketInput>;
 

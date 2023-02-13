@@ -25,6 +25,7 @@ export class MarketService {
         createdByUserUuid: userUuid,
         question: input.question,
         description: input.description,
+        closedAt: input.closedAt,
       },
     });
     return MarketUuid.parse(market.uuid);
@@ -62,6 +63,8 @@ export class MarketService {
         updatedAt: market.createdByUser.updatedAt.toISOString(),
         lastLogin: market.createdByUser.lastLogin?.toISOString(),
       }),
+      closedAt: market.closedAt?.toISOString(),
+      resolutionAlignment: market.resolutionAlignment?.toString(),
     });
   }
 
@@ -77,6 +80,8 @@ export class MarketService {
         resolvedAt: market.resolvedAt?.toISOString(),
         createdAt: market.createdAt.toISOString(),
         updatedAt: market.updatedAt.toISOString(),
+        resolutionAlignment: market.resolutionAlignment?.toString(),
+        closedAt: market.closedAt?.toISOString(),
       }),
     );
   }

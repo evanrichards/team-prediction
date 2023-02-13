@@ -74,3 +74,16 @@ export function filterUserLiveShares(
     },
   );
 }
+
+export function marketValueForLedger(ledger: LedgerEntry[]): number {
+  if (ledger.length === 0) {
+    return 50;
+  }
+  const split = parseLedger(ledger);
+  if (split.totalLiveCount === 0) {
+    return 50;
+  }
+  return (
+    ((split.yesBuyCount - split.yesSellCount) * 100) / split.totalLiveCount
+  );
+}

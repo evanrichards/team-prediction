@@ -40,12 +40,14 @@ model MarketLedger {
 }
 
 model Market {
-  uuid              String    @id @default(uuid())
-  question          String
-  description       String
-  createdByUserUuid String    @map("created_by")
-  createdByUser     User      @relation(fields: [createdByUserUuid], references: [uuid])
-  resolvedAt        DateTime? @map("resolved_at")
+  uuid                String    @id @default(uuid())
+  question            String
+  description         String
+  createdByUserUuid   String    @map("created_by")
+  createdByUser       User      @relation(fields: [createdByUserUuid], references: [uuid])
+  resolvedAt          DateTime? @map("resolved_at")
+  closedAt            DateTime? @map("closed_at")
+  resolutionAlignment String?   @map("resolution_alignment")
 
   createdAt    DateTime       @default(now()) @map("created_at")
   updatedAt    DateTime       @updatedAt @map("updated_at")
