@@ -1,76 +1,10 @@
-import {
-  filterUserLiveShares,
-  marketValueDisplay,
-  marketValueForLedger,
-} from 'src/common/markets/utils';
-import Button from 'src/components/Button';
+import { marketValueForLedger } from 'src/common/markets/utils';
 import { LedgerEntry, MarketWithActivity } from 'src/types/market';
 import { UserUuid } from 'src/types/user';
 import tw from 'tailwind-styled-components';
-import 'chartjs-adapter-date-fns';
 
-import { enUS } from 'date-fns/locale';
-
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Filler,
-  Legend,
-  TimeScale,
-} from 'chart.js';
-import { Line } from 'react-chartjs-2';
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Filler,
-  Legend,
-  TimeScale,
-);
-export const options = {
-  animation: {
-    duration: 0,
-  },
-  ticks: {
-    source: 'data',
-  },
-  scales: {
-    x: {
-      type: 'time',
-      time: {
-        unit: 'day',
-      },
-    },
-    y: {
-      min: 0,
-      max: 100,
-    },
-  },
-  // turn off legend and title:
-  plugins: {
-    legend: {
-      display: false,
-    },
-    title: {
-      display: false,
-    },
-  },
-  adapters: {
-    date: {
-      locale: enUS,
-    },
-  },
-  responsive: true,
-  maintainAspectRatio: false,
-};
+import MarketDescription from 'src/components/markets/market-description';
+import MarketChart from 'src/components/markets/market-chart';
 export default function MarketCard({
   handleBuyYes,
   handleBuyNo,
@@ -90,49 +24,16 @@ export default function MarketCard({
   mutating: boolean;
   userUuid: UserUuid;
 }) {
-  const userLiveShares = filterUserLiveShares(ledger, userUuid);
   const marketValue = marketValueForLedger(ledger);
-  const graphData = createGraphData({ ...marketData, marketLedger: ledger });
-  const graphComponentInput = {
-    datasets: [
-      {
-        fill: true,
-        data: graphData,
-        backgroundColor: '#A6E3A1',
-        borderColor: '#40A02B',
-      },
-    ],
-  };
   return (
     <MarketCardSection>
       <MarketCardContainer>
         <MarketCardComponent>
-          <MarketGraphContainer>
-            <Line
-              width={400}
-              height={400}
-              options={{
-                ...options,
-                scales: {
-                  ...options.scales,
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore
-                  x: {
-                    ...options.scales.x,
-                    min: new Date(marketData.createdAt).valueOf(),
-                    max: marketData.closedAt
-                      ? new Date(marketData.closedAt).valueOf()
-                      : new Date().valueOf(),
-                  },
-                },
-              }}
-              data={graphComponentInput}
-            />
-          </MarketGraphContainer>
-          <MarketTextContainer>
-            <div className="flex flex-wrap">
+          <>
+            <div className="flex w-full">
               <MarketType>YES-OR-NO MARKET</MarketType>
-              <span className="ml-auto">
+              <div className="flex-auto" />
+              <div className="flex-none">
                 <MarketType $open={marketData.closedAt === undefined}>
                   {marketData.closedAt
                     ? `CLOSED ON ${new Date(
@@ -140,108 +41,36 @@ export default function MarketCard({
                       ).toDateString()}`
                     : 'OPEN'}
                 </MarketType>
-              </span>
+              </div>
             </div>
             <MarketTitle className="title-font mb-1 text-3xl font-medium text-rosewater">
               {marketData.question}
             </MarketTitle>
-            <p className="prose text-current">{marketData.description}</p>
-            <div className="flex flex-wrap">
-              <span className="title-font text-2xl font-medium text-rosewater">
-                {marketValueDisplay(marketValue)}
-              </span>
-              <div className="ml-auto flex gap-4 text-white">
-                <Button
-                  onClick={handleBuyYes}
-                  disabled={mutating || handleBuyYes === undefined}
-                >
-                  Buy Yes
-                </Button>
-                <Button
-                  onClick={handleBuyNo}
-                  disabled={mutating || handleBuyNo === undefined}
-                >
-                  Buy No
-                </Button>
-                <Button
-                  onClick={handleSellYes}
-                  disabled={
-                    mutating ||
-                    handleSellYes === undefined ||
-                    userLiveShares.yesLiveCount < 1
-                  }
-                >
-                  Sell Yes
-                </Button>
-                <Button
-                  onClick={handleSellNo}
-                  disabled={
-                    mutating ||
-                    handleSellNo === undefined ||
-                    userLiveShares.noLiveCount < 1
-                  }
-                >
-                  Sell No
-                </Button>
-              </div>
-            </div>
-          </MarketTextContainer>
+          </>
+          <div className="h-64 w-full object-cover object-center lg:h-auto lg:w-1/2 ">
+            <MarketChart marketData={marketData} ledger={ledger} />
+          </div>
+          <div
+            className="h-64 w-full object-cover object-center lg:h-auto lg:w-1/2
+          "
+          >
+            <MarketDescription
+              marketValue={marketValue}
+              marketData={marketData}
+              ledger={ledger}
+              handleBuyYes={handleBuyYes}
+              handleBuyNo={handleBuyNo}
+              handleSellYes={handleSellYes}
+              handleSellNo={handleSellNo}
+              mutating={mutating}
+              userUuid={userUuid}
+            />
+          </div>
         </MarketCardComponent>
       </MarketCardContainer>
     </MarketCardSection>
   );
 }
-
-function createGraphData(market: MarketWithActivity) {
-  const { createdAt, closedAt, marketLedger } = market;
-  if (marketLedger.length === 0) {
-    return [
-      { y: 50, x: new Date(createdAt).valueOf() },
-      { y: 50, x: new Date().valueOf() },
-    ];
-  }
-  // sort market ledger by date
-  marketLedger.sort((a, b) => {
-    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-  });
-  const data: { y: number; x: number }[] = [];
-  Array(marketLedger.length)
-    .fill(0)
-    .forEach((_, i) => {
-      const value = marketValueForLedger(marketLedger.slice(0, i + 1));
-      data.push({
-        y: value,
-        x: new Date(marketLedger[i].createdAt).valueOf(),
-      });
-    });
-  const currentValue = marketValueForLedger(marketLedger);
-  if (closedAt) {
-    data.push({
-      y: currentValue,
-      x: new Date(closedAt).valueOf(),
-    });
-  } else {
-    data.push({
-      y: currentValue,
-      x: new Date().valueOf(),
-    });
-  }
-
-  return data;
-}
-
-const MarketGraphContainer = tw.div`
-border-mantle
-rounded
-bg-surface0
-mt-6
-p-6
-lg:w-1/2
-w-full lg:h-auto h-64 object-cover object-center
-`;
-const MarketTextContainer = tw.div`
-mt-6 w-full lg:mt-0 lg:w-1/2 lg:py-6 lg:pl-10 flex-grow
-`;
 
 const MarketTitle = tw.h1`
 title-font mb-1 text-3xl font-medium text-white
@@ -249,6 +78,7 @@ title-font mb-1 text-3xl font-medium text-white
 
 const MarketType = tw.h2`
 uppercase
+flex-none
 ${(p: { $open?: boolean }) =>
   p.$open === true
     ? 'text-green'
