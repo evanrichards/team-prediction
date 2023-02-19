@@ -1,5 +1,4 @@
-import React from 'react';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import { StoryObj, Meta } from '@storybook/react';
 import { MarketWithActivity } from 'src/types/market';
 import MarketCard from 'src/components/markets/market-card';
 
@@ -13,6 +12,7 @@ const data = MarketWithActivity.parse({
   updatedAt: '2023-02-06T17:30:12.042Z',
   resolvedAt: undefined,
   closedAt: undefined,
+  currentValue: 50,
   createdByUser: {
     uuid: '6e8c2491-a842-4f71-9084-275b6020571b',
     email: 'evan@loop.com',
@@ -353,16 +353,14 @@ const data = MarketWithActivity.parse({
   ],
 });
 
-// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
-export default {
+const meta: Meta<typeof MarketCard> = {
   title: 'MarketCard',
   component: MarketCard,
-} as ComponentMeta<typeof MarketCard>;
+};
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof MarketCard> = (args) => (
-  <MarketCard {...args} />
-);
+export default meta;
+type Story = StoryObj<typeof MarketCard>;
+
 const defaultArgs = {
   handleBuyYes: () => {
     console.log('Buy Yes');
@@ -380,27 +378,29 @@ const defaultArgs = {
   ledger: data.marketLedger,
 };
 
-export const Participant = Template.bind({});
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
-Participant.args = {
-  ...defaultArgs,
-};
-
-export const Closed = Template.bind({});
-Closed.args = {
-  ...defaultArgs,
-  marketData: {
-    ...defaultArgs.marketData,
-    closedAt: new Date('2023-02-16').toISOString(),
+export const Participant: Story = {
+  args: {
+    ...defaultArgs,
   },
 };
 
-export const Resolved = Template.bind({});
-Resolved.args = {
-  ...defaultArgs,
-  marketData: {
-    ...defaultArgs.marketData,
-    closedAt: new Date('2023-02-16').toISOString(),
-    resolvedAt: new Date('2023-02-20').toISOString(),
+export const Closed: Story = {
+  args: {
+    ...defaultArgs,
+    marketData: {
+      ...defaultArgs.marketData,
+      closedAt: new Date('2023-02-16').toISOString(),
+    },
+  },
+};
+
+export const Resolved: Story = {
+  args: {
+    ...defaultArgs,
+    marketData: {
+      ...defaultArgs.marketData,
+      closedAt: new Date('2023-02-16').toISOString(),
+      resolvedAt: new Date('2023-02-20').toISOString(),
+    },
   },
 };
