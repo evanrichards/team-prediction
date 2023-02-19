@@ -43,3 +43,4 @@ copy.env.local
 *.db
 *.db-journal
 /storybook-static
+.storybook
