@@ -4,6 +4,7 @@ import { Heading2XL } from 'src/components/heading';
 import Navbar from 'src/components/navbar';
 import { ThemeContext } from 'src/context/theme-context';
 import tw from 'tailwind-styled-components';
+import React from 'react';
 
 const SITE_TITLE = 'Team Prediction';
 export default function Layout({

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import tw from 'tailwind-styled-components';
+import React from 'react';
 
 type Flavor = 'primary' | 'secondary' | 'danger';
 
