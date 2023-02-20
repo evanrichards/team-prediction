@@ -75,5 +75,5 @@ export default function MarketDescription({
   );
 }
 const MarketTextContainer = tw.div`
-mt-6 w-full lg:mt-0 lg:py-6 lg:pl-10 flex-grow
+mt-6 w-full lg:mt-0 
 `;

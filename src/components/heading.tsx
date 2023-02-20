@@ -1,5 +1,6 @@
 import tw from 'tailwind-styled-components';
 
+import React from 'react';
 export function Heading2XL({ children }: { children: React.ReactNode }) {
   return <Heading2XLInner>{children}</Heading2XLInner>;
 }

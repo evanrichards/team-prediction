@@ -149,6 +149,5 @@ const MarketGraphContainer = tw.div`
 border-mantle
 rounded
 bg-surface0
-mt-6
 p-6
 `;
