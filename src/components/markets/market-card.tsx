@@ -6,7 +6,9 @@ import { Tab } from '@headlessui/react';
 
 import MarketDescription from 'src/components/markets/market-description';
 import MarketChart from 'src/components/markets/market-chart';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import MarketActivity from 'src/components/markets/market-activity';
+
 export default function MarketCard({
   handleBuyYes,
   handleBuyNo,
@@ -27,7 +29,7 @@ export default function MarketCard({
   userUuid: UserUuid;
 }) {
   const marketValue = marketValueForLedger(ledger);
-  const [categories] = useState({
+  const [categories, setCategories] = useState({
     'Market Description': (
       <MarketDescription
         marketValue={marketValue}
@@ -41,7 +43,36 @@ export default function MarketCard({
         userUuid={userUuid}
       />
     ),
+    Activity: <MarketActivity userUuid={userUuid} ledger={ledger} />,
   });
+  useEffect(() => {
+    setCategories({
+      'Market Description': (
+        <MarketDescription
+          marketValue={marketValue}
+          marketData={marketData}
+          ledger={ledger}
+          handleBuyYes={handleBuyYes}
+          handleBuyNo={handleBuyNo}
+          handleSellYes={handleSellYes}
+          handleSellNo={handleSellNo}
+          mutating={mutating}
+          userUuid={userUuid}
+        />
+      ),
+      Activity: <MarketActivity userUuid={userUuid} ledger={ledger} />,
+    });
+  }, [
+    marketValue,
+    marketData,
+    ledger,
+    handleBuyYes,
+    handleBuyNo,
+    handleSellYes,
+    handleSellNo,
+    mutating,
+    userUuid,
+  ]);
   return (
     <MarketCardSection>
       <MarketCardContainer>
@@ -64,11 +95,11 @@ export default function MarketCard({
               {marketData.question}
             </MarketTitle>
           </>
-          <div className="flex flex-wrap ">
-            <div className="w-full pr-1 md:w-1/2">
+          <div className="flex flex-wrap md:grid md:grid-cols-2">
+            <div className="w-full pr-1">
               <MarketChart marketData={marketData} ledger={ledger} />
             </div>
-            <div className="w-full pl-1 md:w-1/2">
+            <div className="w-full pl-1">
               <Tab.Group>
                 <Tab.List className="flex space-x-1 rounded-xl p-1">
                   {Object.keys(categories).map((category) => (
@@ -86,7 +117,7 @@ export default function MarketCard({
                     </Tab>
                   ))}
                 </Tab.List>
-                <Tab.Panels className="mt-2">
+                <Tab.Panels className="">
                   {Object.values(categories).map((component, idx) => (
                     <Tab.Panel
                       key={idx}
