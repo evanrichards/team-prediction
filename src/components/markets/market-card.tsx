@@ -82,12 +82,11 @@ export default function MarketCard({
               <MarketType>YES-OR-NO MARKET</MarketType>
               <div className="flex-auto" />
               <div className="flex-none">
-                <MarketType $open={marketData.closedAt === undefined}>
-                  {marketData.closedAt
-                    ? `CLOSED ON ${new Date(
-                        marketData.closedAt,
-                      ).toDateString()}`
-                    : 'OPEN'}
+                <MarketType
+                  $open={marketData.closedAt === undefined}
+                  $resolved={!!marketData.resolvedAt}
+                >
+                  {getMarketStatus(marketData)}
                 </MarketType>
               </div>
             </div>
@@ -138,6 +137,18 @@ export default function MarketCard({
   );
 }
 
+function getMarketStatus(marketData: MarketWithActivity) {
+  if (marketData.resolvedAt) {
+    return `Resolved to ${marketData.resolutionAlignment} on ${new Date(
+      marketData.resolvedAt,
+    ).toDateString()}`;
+  }
+  if (marketData.closedAt) {
+    return `Closed on ${new Date(marketData.closedAt).toDateString()}`;
+  }
+  return 'Open';
+}
+
 const MarketTitle = tw.h1`
 title-font mb-1 text-3xl font-medium text-white
 `;
@@ -145,8 +156,10 @@ title-font mb-1 text-3xl font-medium text-white
 const MarketType = tw.h2`
 uppercase
 flex-none
-${(p: { $open?: boolean }) =>
-  p.$open === true
+${(p: { $open?: boolean; $resolved?: boolean }) =>
+  p.$resolved
+    ? 'text-lavender'
+    : p.$open === true
     ? 'text-green'
     : p.$open === false
     ? 'text-maroon'
