@@ -3,6 +3,7 @@ import {
   MarketAlignment,
   TransactionType,
 } from 'src/types/market';
+import { z } from 'zod';
 import { UserUuid } from 'src/types/user';
 
 export function parseLedger(ledger: LedgerEntry[]): {
@@ -96,4 +97,49 @@ export function marketValueDisplay(marketValue: number): string {
     return `${marketValue.toFixed(2)}%`;
   }
   return `${marketValue.toFixed(0)}%`;
+}
+
+const MarketActivityByUser = z.object({
+  userUuid: UserUuid,
+  firstEntry: z.date(),
+  fromValue: z.number().int().min(0).max(100),
+  toValue: z.number().int().min(0).max(100),
+  transactionType: TransactionType,
+  marketAlignment: MarketAlignment,
+  count: z.number().int().min(0),
+});
+type MarketActivityByUser = z.infer<typeof MarketActivityByUser>;
+
+export function marketChangesByUser(
+  ledger: LedgerEntry[],
+): MarketActivityByUser[] {
+  ledger.sort((a, b) => {
+    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+  });
+  const activity: MarketActivityByUser[] = [];
+  ledger.forEach((entry, i) => {
+    const previousUser = activity[activity.length - 1]?.userUuid;
+    const previousAction = activity[activity.length - 1]?.transactionType;
+    const previousAlignment = activity[activity.length - 1]?.marketAlignment;
+
+    if (
+      previousUser !== entry.userUuid ||
+      previousAction !== entry.transactionType ||
+      previousAlignment !== entry.marketAlignment
+    ) {
+      activity.push({
+        firstEntry: new Date(entry.createdAt),
+        userUuid: entry.userUuid,
+        fromValue: activity[activity.length - 1]?.toValue || 50,
+        toValue: activity[activity.length - 1]?.toValue || 50,
+        transactionType: entry.transactionType,
+        marketAlignment: entry.marketAlignment,
+        count: 0,
+      });
+    }
+    const value = marketValueForLedger(ledger.slice(0, i + 1));
+    activity[activity.length - 1].toValue = value;
+    activity[activity.length - 1].count += 1;
+  });
+  return activity;
 }
