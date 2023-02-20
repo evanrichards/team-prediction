@@ -108,6 +108,7 @@ export default function MarketChart({
     </MarketGraphContainer>
   );
 }
+
 function createGraphData(market: MarketWithActivity) {
   const { createdAt, closedAt, marketLedger } = market;
   if (marketLedger.length === 0) {
