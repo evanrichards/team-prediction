@@ -9,6 +9,7 @@ import MarketChart from 'src/components/markets/market-chart';
 import { useEffect, useState } from 'react';
 import MarketActivity from 'src/components/markets/market-activity';
 
+import MarketPosition from 'src/components/markets/market-position';
 export default function MarketCard({
   handleBuyYes,
   handleBuyNo,
@@ -43,6 +44,7 @@ export default function MarketCard({
         userUuid={userUuid}
       />
     ),
+    'My Position': <MarketPosition userUuid={userUuid} ledger={ledger} />,
     Activity: <MarketActivity userUuid={userUuid} ledger={ledger} />,
   });
   useEffect(() => {
@@ -60,6 +62,7 @@ export default function MarketCard({
           userUuid={userUuid}
         />
       ),
+      'My Position': <MarketPosition userUuid={userUuid} ledger={ledger} />,
       Activity: <MarketActivity userUuid={userUuid} ledger={ledger} />,
     });
   }, [
