@@ -103,27 +103,25 @@ export default function MarketPage() {
   }
   return (
     <Layout>
-      <div>
-        <MarketCard
-          handleBuyYes={handleBuyYes}
-          handleBuyNo={handleBuyNo}
-          handleSellYes={handleSellYes}
-          handleSellNo={handleSellNo}
-          marketData={marketQuery.data}
-          ledger={ledger}
-          mutating={mutating}
-          userUuid={userQuery.data?.uuid}
-          marketUuid={marketUuid}
+      <MarketCard
+        handleBuyYes={handleBuyYes}
+        handleBuyNo={handleBuyNo}
+        handleSellYes={handleSellYes}
+        handleSellNo={handleSellNo}
+        marketData={marketQuery.data}
+        ledger={ledger}
+        mutating={mutating}
+        userUuid={userQuery.data?.uuid}
+        marketUuid={marketUuid}
+      />
+      {userQuery.data?.uuid === marketQuery.data?.createdByUser.uuid && (
+        <MarketAdminCard
+          handleResolveMarket={handleResolveMarket}
+          handleCloseMarket={handleCloseMarket}
+          marketIsClosed={marketQuery.data?.closedAt !== undefined}
+          marketIsResolved={marketQuery.data?.resolvedAt !== undefined}
         />
-        {userQuery.data?.uuid === marketQuery.data?.createdByUser.uuid && (
-          <MarketAdminCard
-            handleResolveMarket={handleResolveMarket}
-            handleCloseMarket={handleCloseMarket}
-            marketIsClosed={marketQuery.data?.closedAt !== undefined}
-            marketIsResolved={marketQuery.data?.resolvedAt !== undefined}
-          />
-        )}
-      </div>
+      )}
     </Layout>
   );
 }
