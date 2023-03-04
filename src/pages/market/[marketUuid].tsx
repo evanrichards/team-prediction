@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { MutableRefObject, useEffect, useRef, useState } from 'react';
 import Layout from 'src/components/layout';
 import MarketAdminCard from 'src/components/markets/market-admin-card';
 import MarketCard from 'src/components/markets/market-card';
@@ -9,6 +9,8 @@ import {
   MarketUuid,
 } from 'src/types/market';
 import { trpc } from 'src/utils/trpc';
+import { Message } from 'src/types/message';
+import Messenger from 'src/components/Messenger';
 
 export default function MarketPage() {
   const router = useRouter();
@@ -110,17 +112,16 @@ export default function MarketPage() {
         ledger={ledger}
         mutating={mutating}
         userUuid={userQuery.data?.uuid}
+        marketUuid={marketUuid}
       />
-      {userQuery.data !== undefined &&
-        marketQuery.data !== undefined &&
-        userQuery.data?.uuid === marketQuery.data?.createdByUser.uuid && (
-          <MarketAdminCard
-            handleResolveMarket={handleResolveMarket}
-            handleCloseMarket={handleCloseMarket}
-            marketIsClosed={marketQuery.data?.closedAt !== undefined}
-            marketIsResolved={marketQuery.data?.resolvedAt !== undefined}
-          />
-        )}
+      {userQuery.data?.uuid === marketQuery.data?.createdByUser.uuid && (
+        <MarketAdminCard
+          handleResolveMarket={handleResolveMarket}
+          handleCloseMarket={handleCloseMarket}
+          marketIsClosed={marketQuery.data?.closedAt !== undefined}
+          marketIsResolved={marketQuery.data?.resolvedAt !== undefined}
+        />
+      )}
     </Layout>
   );
 }

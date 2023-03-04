@@ -1,5 +1,5 @@
 import { marketValueForLedger } from 'src/common/markets/utils';
-import { LedgerEntry, MarketWithActivity } from 'src/types/market';
+import { LedgerEntry, MarketUuid, MarketWithActivity } from 'src/types/market';
 import { UserUuid } from 'src/types/user';
 import tw from 'tailwind-styled-components';
 import { Tab } from '@headlessui/react';
@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import MarketActivity from 'src/components/markets/market-activity';
 
 import MarketPosition from 'src/components/markets/market-position';
+import Messenger from 'src/components/Messenger';
 export default function MarketCard({
   handleBuyYes,
   handleBuyNo,
@@ -19,6 +20,7 @@ export default function MarketCard({
   ledger,
   mutating,
   userUuid,
+  marketUuid,
 }: {
   handleBuyYes: () => void;
   handleBuyNo: () => void;
@@ -28,6 +30,7 @@ export default function MarketCard({
   ledger: LedgerEntry[];
   mutating: boolean;
   userUuid: UserUuid;
+  marketUuid: MarketUuid;
 }) {
   const marketValue = marketValueForLedger(ledger);
   const [categories, setCategories] = useState({
@@ -132,6 +135,9 @@ export default function MarketCard({
                   ))}
                 </Tab.Panels>
               </Tab.Group>
+              <div className="mt-6">
+                <Messenger marketUuid={marketUuid} />
+              </div>
             </div>
           </div>
         </MarketCardComponent>
