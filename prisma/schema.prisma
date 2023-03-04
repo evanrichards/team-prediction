@@ -17,6 +17,7 @@ model User {
   lastLogin    DateTime?      @map("last_login")
   marketLedger MarketLedger[]
   market       Market[]
+  Messages     Message[]
 
   @@map("user")
 }
@@ -52,7 +53,24 @@ model Market {
   createdAt    DateTime       @default(now()) @map("created_at")
   updatedAt    DateTime       @updatedAt @map("updated_at")
   marketLedger MarketLedger[]
+  Messages     Message[]
 
   @@index([createdByUserUuid])
   @@map("market")
+}
+
+model Message {
+  uuid      String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  message           String
+  createdByUserUuid String @map("created_by")
+  createdByUser     User   @relation(fields: [createdByUserUuid], references: [uuid])
+  marketUuid        String
+  market            Market @relation(fields: [marketUuid], references: [uuid])
+
+  @@index([createdByUserUuid])
+  @@index([marketUuid])
+  @@map("message")
 }
