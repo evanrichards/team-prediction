@@ -76,7 +76,7 @@
     "@babel/core": "^7.0.0-0",
     "@catppuccin/tailwindcss": "^0.1.1",
     "@next/eslint-plugin-next": "^13.2.2",
-    "@playwright/test": "^1.30.0",
+    "@playwright/test": "^1.35.1",
     "@storybook/addon-essentials": "^7.0.0-beta.60",
     "@storybook/addon-interactions": "^7.0.0-beta.50",
     "@storybook/addon-links": "^7.0.0-rc.3",
