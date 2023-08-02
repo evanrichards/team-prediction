@@ -81,7 +81,7 @@
     "@storybook/addon-interactions": "^7.0.0-beta.50",
     "@storybook/addon-links": "^7.0.0-rc.3",
     "@storybook/blocks": "^7.0.0-beta.55",
-    "@storybook/nextjs": "^7.1.0",
+    "@storybook/nextjs": "^7.2.0",
     "@storybook/react": "^7.0.0-beta.50",
     "@storybook/testing-library": "^0.0.14--canary.30.5f44d14.0",
     "@tailwindcss/forms": "^0.5.3",
